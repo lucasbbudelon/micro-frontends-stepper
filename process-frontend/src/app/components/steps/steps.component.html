@@ -1,0 +1,7 @@
+<ul class="list-group" *ngIf="process">
+  <li class="list-group-item" *ngFor="let step of steps" routerLinkActive="currenr-step">
+    <a [routerLink]="step.id">
+      {{step.name}}
+    </a>
+  </li>
+</ul>
