@@ -1,7 +1,8 @@
-<ul class="list-group" *ngIf="process">
-  <li class="list-group-item" *ngFor="let step of steps" routerLinkActive="currenr-step">
-    <a [routerLink]="step.id">
-      {{step.name}}
+<ul *ngIf="process">
+  <li *ngFor="let step of steps">
+    <a [routerLink]="step.id" routerLinkActive="currenr-step">
+      <div class="circle" [class.completed]="step.completed"></div>
+      <span class="name">{{step.name}}</span>
     </a>
   </li>
 </ul>
