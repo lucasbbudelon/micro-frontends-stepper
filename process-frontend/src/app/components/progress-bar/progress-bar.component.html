@@ -1,0 +1,11 @@
+  <div class="row fixed-bottom">
+    <div class="col-12">
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" 
+          [style.width.%]="percentage" 
+          [attr.aria-valuenow]="percentage" 
+          aria-valuemin="0"
+          aria-valuemax="100">{{percentage}}%</div>
+      </div>
+    </div>
+  </div>

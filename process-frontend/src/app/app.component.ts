@@ -11,7 +11,6 @@ import { ProcessService } from './core/process/process.service';
 
 export class AppComponent implements OnInit {
 
-  public newConnection: string;
   public block: boolean;
 
   constructor(
@@ -20,20 +19,6 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.messengerService.newConnectionsListening()
-      .pipe(
-        tap((newConnection) => {
-          this.newConnection = newConnection;
-          setTimeout(() => {
-            this.newConnection = null;
-          }, 5000);
-        })
-      )
-      .subscribe();
-
-    // this.messengerService.changeProcessListening()
-    //   .pipe(tap(process => this.processService.handleChangeProcess(process)))
-    //   .subscribe();
 
     this.messengerService.nextStepListening()
       .pipe(tap(process => this.processService.handleNextStep(process)))
@@ -43,14 +28,8 @@ export class AppComponent implements OnInit {
       .pipe(tap(process => this.processService.handleBackStep(process)))
       .subscribe();
 
-
-
     this.messengerService.blockProcessListening()
       .pipe(tap(() => this.block = true))
-      .subscribe();
-
-    this.messengerService.blockProcessListening()
-      .pipe(tap(() => this.block = false))
       .subscribe();
 
     this.processService.keepProcess();

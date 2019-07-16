@@ -18,6 +18,7 @@ import { ErrorComponent } from './pages/error/error.component';
 import { FinalizationComponent } from './pages/finalization/finalization.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ProcessComponent } from './pages/process/process.component';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ProcessComponent } from './pages/process/process.component';
     StepsComponent,
     ProcessComponent,
     CustomizationComponent,
-    StepsNavigationComponent
+    StepsNavigationComponent,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,
