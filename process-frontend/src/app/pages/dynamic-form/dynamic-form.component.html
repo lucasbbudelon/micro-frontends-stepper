@@ -1,23 +1,20 @@
 <form class="container-fluid" *ngIf="step" #stepForm="ngForm" (ngSubmit)="submit()">
-  <div class="page-header">
-    <h1>{{step.title}}</h1>
-    <small>Última visualização: {{step.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
-    <small *ngIf="step.lastUpdate"> | Última atualização: {{step.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+  <div class="row">
+    <div class="col-12">
+      <h1>{{step.title}}</h1>
+      <small>Última visualização: {{step.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+      <small *ngIf="step.lastUpdate"> | Última atualização: {{step.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+    </div>
   </div>
   <div class="row mt-5">
     <div class="col-12">
       <div class="form-group" *ngFor="let field of step.fields">
-        <label [for]="field.codeName">{{field.label}}</label>
+        <label [for]="field.codeName">{{field.label}} <span *ngIf="field.required">*</span> </label>
 
-        <input *ngIf="!field.options" class="form-control" type="text" 
-          [(ngModel)]="field.value" 
-          [name]="field.codeName"
-          [required]="field.required" 
-          [placeholder]="field.placeholder">
+        <input *ngIf="!field.options" class="form-control" type="text" [(ngModel)]="field.value" [name]="field.codeName"
+          [required]="field.required" [placeholder]="field.placeholder">
 
-        <select *ngIf="field.options" class="form-control"
-          [(ngModel)]="field.value"
-          [name]="field.codeName"
+        <select *ngIf="field.options" class="form-control" [(ngModel)]="field.value" [name]="field.codeName"
           [required]="field.required">
 
           <option>{{field.placeholder}}</option>

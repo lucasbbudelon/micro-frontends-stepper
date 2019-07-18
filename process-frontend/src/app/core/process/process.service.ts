@@ -19,9 +19,7 @@ export class ProcessService {
     private router: Router,
     private httpClient: HttpClient,
     private messengerService: MessengerService
-  ) {
-
-  }
+  ) { }
 
   getAll() {
     const url = `${environment.bff}/process`;
@@ -75,16 +73,6 @@ export class ProcessService {
         })
       );
   }
-
-  // updateLastAcess(process: Process, codeNameStep: string) {
-  //   const step = this.getStep(process, codeNameStep);
-  //   step.lastAcess = new Date();
-  //   return this
-  //     .patch(step)
-  //     .pipe(
-  //       tap(p => this.updateCurrent(p))
-  //     );
-  // }
 
   updateLastAcess(codeNameStep: string) {
     return this

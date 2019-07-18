@@ -1,6 +1,6 @@
 <ul *ngIf="steps">
   <li *ngFor="let step of steps">
-    <a [routerLink]="step.codeName" [queryParams]="{process: process.id}" routerLinkActive="currenr-step">
+    <a [routerLink]="['/' + step.codeName]" preserveQueryParams routerLinkActive="currenr-step">
       <div class="circle" [class.completed]="step.completed"></div>
       <span class="name">{{step.title}}</span>
     </a>

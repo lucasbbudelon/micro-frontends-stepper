@@ -9,6 +9,7 @@ import { ListComponent } from './pages/list/list.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ParameterizationComponent } from './pages/parameterization/parameterization.component';
 import { ProcessComponent } from './pages/process/process.component';
+import { StepperLayoutComponent } from './layouts/stepper-layout/stepper-layout.component';
 
 const routes: Routes = [
   {
@@ -24,35 +25,43 @@ const routes: Routes = [
     path: 'process',
     component: ProcessComponent
   },
+
+
   {
-    path: 'document',
-    component: DynamicFormComponent,
-    canActivate: [StepsGuard]
-  },
-  {
-    path: 'basic-data',
-    component: DynamicFormComponent,
-    canActivate: [StepsGuard]
-  },
-  {
-    path: 'address',
-    component: DynamicFormComponent,
-    canActivate: [StepsGuard]
-  },
-  {
-    path: 'professional-data',
-    component: ParameterizationComponent,
-    canActivate: [StepsGuard]
-  },
-  {
-    path: 'academic-data',
-    component: ParameterizationComponent,
-    canActivate: [StepsGuard]
-  },
-  {
-    path: 'contract',
-    component: ContractComponent,
-    canActivate: [StepsGuard]
+    path: '',
+    component: StepperLayoutComponent,
+    children: [
+      {
+        path: 'document',
+        component: DynamicFormComponent,
+        canActivate: [StepsGuard]
+      },
+      {
+        path: 'basic-data',
+        component: DynamicFormComponent,
+        canActivate: [StepsGuard]
+      },
+      {
+        path: 'address',
+        component: DynamicFormComponent,
+        canActivate: [StepsGuard]
+      },
+      {
+        path: 'professional-data',
+        component: ParameterizationComponent,
+        canActivate: [StepsGuard]
+      },
+      {
+        path: 'academic-data',
+        component: ParameterizationComponent,
+        canActivate: [StepsGuard]
+      },
+      {
+        path: 'contract',
+        component: ContractComponent,
+        canActivate: [StepsGuard]
+      },
+    ]
   },
   {
     path: 'finalization',

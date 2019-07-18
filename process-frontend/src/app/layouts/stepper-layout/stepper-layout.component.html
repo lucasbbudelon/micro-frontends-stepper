@@ -1,0 +1,32 @@
+<div class="container-fluid p-5" *ngIf="process">
+  <div class="row">
+    <div class="col-2 d-flex justify-content-center">
+      <div class="position-fixed">
+        <a *ngIf="process.backStep" [routerLink]="['/' + process.backStep.codeName]" preserveQueryParams>
+          <fa name="arrow-left" class="arrow" (click)="back()"></fa>
+        </a>
+      </div>
+    </div>
+    <div class="col-5">
+      <router-outlet></router-outlet>
+    </div>
+    <div class="col-2 d-flex justify-content-center">
+      <div class="position-fixed">
+        <a *ngIf="process.nextStep" [routerLink]="['/' + process.nextStep.codeName]" preserveQueryParams>
+          <fa name="arrow-right" class="arrow"></fa>
+        </a>
+      </div>
+    </div>
+    <div class="col-3 d-flex justify-content-center">
+      <div class="position-fixed">
+        <app-steps></app-steps>
+      </div>
+    </div>
+  </div>
+  <div class="row fixed-bottom">
+    <div class="col-12">
+      <app-progress-bar></app-progress-bar>
+    </div>
+  </div>
+</div>
+<!-- <div *ngIf="block" class="block"></div> -->
