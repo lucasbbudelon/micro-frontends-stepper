@@ -58,47 +58,21 @@ namespace process_bff.Controllers
         }
 
         // GET: api/process/123/steps/document
-        [HttpGet("{id}/steps/{idStep}")]
-        public ActionResult<Process> GetStep(int id, string idStep)
+        [HttpGet("{id}/steps/{codeName}")]
+        public ActionResult<Process> GetStep(int id, string codeName)
         {
             var process = _listProcess.FirstOrDefault(p => p.Id == id);
-
             if (process == null)
             {
                 return NotFound();
             }
 
-            Step step;
-
-            switch (idStep)
-            {
-                case "last":
-                    step = process.Steps
-                        .OrderBy(s => s.Order)
-                        .OrderByDescending(s => s.LastAcess)
-                        .FirstOrDefault();
-                    break;
-
-                case "current":
-                    step = process.Steps
-                        .Where(s => !s.Completed)
-                        .OrderBy(s => s.Order)
-                        .FirstOrDefault();
-                    break;
-
-                default:
-                    step = process.Steps
-                        .FirstOrDefault(s => s.Id.Equals(idStep));
-                    break;
-            }
-
-
+            var step = process.Steps.FirstOrDefault(s => s.CodeName.Equals(codeName)); ;
             if (step == null)
             {
                 return NotFound();
             }
-
-
+            
             return Ok(step);
         }
 
@@ -134,8 +108,8 @@ namespace process_bff.Controllers
         }
 
         // Patch: api/process/123/step/document
-        [HttpPatch("{id}/step/{idStep}")]
-        public ActionResult<Process> Patch(int id, string idStep, [FromBody] Step step)
+        [HttpPatch("{id}/step/{codeName}")]
+        public ActionResult<Process> Patch(int id, string codeName, [FromBody] Step step)
         {
             var process = _listProcess.FirstOrDefault(p => p.Id.Equals(id));
 
@@ -147,7 +121,7 @@ namespace process_bff.Controllers
             {
                 _listProcess.RemoveAll(p => p.Id == id);
 
-                process.Steps.RemoveAll(s => s.Id.Equals(idStep));
+                process.Steps.RemoveAll(s => s.CodeName.Equals(codeName));
                 process.Steps.Add(step);
 
                 _listProcess.Add(process);
@@ -162,54 +136,107 @@ namespace process_bff.Controllers
                 {
                     new Step()
                     {
-                        Id = "document",
-                        Name = "Documento de Identificação",
-                        Type = StepType.Process,
-                        Order = 1
+                        CodeName = "document",
+                        Title = "Documento de Identificação",
+                        Order = 1,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "document-type",
+                                Label = "Tipo",
+                                Placeholder = "Selecione o tipo do documento",
+                                Required = true,
+                                Options = new List<string>() { "RG", "CNH"}
+                            },
+                            new Field()
+                            {
+                                CodeName = "document-number",
+                                Label = "Número do documento",
+                                Placeholder = "Informe o número do documento",
+                                Required = true,
+                                Type = "text"
+                            }
+                        }
                     },
                     new Step()
                     {
-                        Id = "basic-data",
-                        Name = "Dados Básicos",
-                        Type = StepType.Process,
-                        Order = 2
+                        CodeName = "basic-data",
+                        Title = "Dados Básicos",
+                        Order = 2,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "name",
+                                Label = "Nome completo",
+                                Placeholder = "",
+                                Required = true,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "mother-name",
+                                Label = "Nome da mãe",
+                                Placeholder = "",
+                                Required = true,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "father-name",
+                                Label = "Nome do pai",
+                                Placeholder = "",
+                                Required = true,
+                            },
+                            new Field()
+                            {
+                                CodeName = "profession",
+                                Label = "Profissão",
+                                Placeholder = "",
+                                Required = true,
+                            },
+                            new Field()
+                            {
+                                CodeName = "nationality",
+                                Label = "Nacionalidade",
+                                Placeholder = "",
+                                Required = false,
+                            },
+                            new Field()
+                            {
+                                CodeName = "naturalness",
+                                Label = "Naturalidade",
+                                Placeholder = "",
+                                Required = false,
+                            }
+                        }
                     },
                     new Step()
                     {
-                        Id = "address",
-                        Name = "Endereço",
-                        Type = StepType.Process,
+                        CodeName = "address",
+                        Title = "Endereço",
                         Order = 3
                     },
                     new Step()
                     {
-                        Id = "academic-data",
-                        Name = "Dados Acadêmicos",
-                        Type = StepType.Customization,
+                        CodeName = "academic-data",
+                        Title = "Dados Acadêmicos",
                         Url = "http://localhost:3000",
                         Order = 4
                     },
                     new Step()
                     {
-                        Id = "professional-data",
-                        Name = "Dados Profissionais",
-                        Type = StepType.Customization,
+                        CodeName = "professional-data",
+                        Title = "Dados Profissionais",
                         Url = "http://localhost:4500",
                         Order = 5
                     },
                     new Step()
                     {
-                        Id = "contract",
-                        Name = "Contrato",
-                        Type = StepType.Process,
+                        CodeName = "contract",
+                        Title = "Contrato",
                         Order = 6
-                    },
-                    new Step()
-                    {
-                        Id = "finalization",
-                        Name = "Finalização",
-                        Type = StepType.Process,
-                        Order = 7
                     }
                 };
         }

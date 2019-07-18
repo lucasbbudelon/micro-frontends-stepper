@@ -1,0 +1,40 @@
+<form class="container-fluid" *ngIf="step" #stepForm="ngForm" (ngSubmit)="submit()">
+  <div class="page-header">
+    <h1>{{step.title}}</h1>
+    <small>Última visualização: {{step.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+    <small *ngIf="step.lastUpdate"> | Última atualização: {{step.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+  </div>
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="form-group" *ngFor="let field of step.fields">
+        <label [for]="field.codeName">{{field.label}}</label>
+
+        <input *ngIf="!field.options" class="form-control" type="text" 
+          [(ngModel)]="field.value" 
+          [name]="field.codeName"
+          [required]="field.required" 
+          [placeholder]="field.placeholder">
+
+        <select *ngIf="field.options" class="form-control"
+          [(ngModel)]="field.value"
+          [name]="field.codeName"
+          [required]="field.required">
+
+          <option>{{field.placeholder}}</option>
+          <option *ngFor="let option of field.options" [value]="option">{{option}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="mb-2 col-md-3">
+      <button type="submit" class="btn btn-primary w-100">salvar</button>
+    </div>
+    <div class="mb-2 col-md-3 offset-md-3">
+      <button type="button" class="btn btn-primary w-100" (click)="back()">voltar</button>
+    </div>
+    <div class="mb-2 col-md-3">
+      <button type="button" class="btn btn-primary w-100" (click)="next()">próximo</button>
+    </div>
+  </div>
+</form>
