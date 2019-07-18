@@ -1,64 +1,64 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProcessGuard } from './core/process/process.guard';
-import { AddressComponent } from './pages/address/address.component';
-import { BasicDataComponent } from './pages/basic-data/basic-data.component';
+import { StepsGuard } from './components/steps/steps.guard';
 import { ContractComponent } from './pages/contract/contract.component';
-import { CustomizationComponent } from './pages/customization/customization.component';
-import { DocumentComponent } from './pages/document/document.component';
+import { DynamicFormComponent } from './pages/dynamic-form/dynamic-form.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { FinalizationComponent } from './pages/finalization/finalization.component';
+import { ListComponent } from './pages/list/list.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ParameterizationComponent } from './pages/parameterization/parameterization.component';
 import { ProcessComponent } from './pages/process/process.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'process',
+    redirectTo: 'list',
     pathMatch: 'full'
   },
   {
+    path: 'list',
+    component: ListComponent
+  },
+  {
     path: 'process',
-    component: ProcessComponent,
-    canActivate: [ProcessGuard]
+    component: ProcessComponent
   },
   {
     path: 'document',
-    component: DocumentComponent,
-    canActivate: [ProcessGuard]
+    component: DynamicFormComponent,
+    canActivate: [StepsGuard]
   },
   {
     path: 'basic-data',
-    component: BasicDataComponent,
-    canActivate: [ProcessGuard]
+    component: DynamicFormComponent,
+    canActivate: [StepsGuard]
   },
   {
     path: 'address',
-    component: AddressComponent,
-    canActivate: [ProcessGuard]
+    component: DynamicFormComponent,
+    canActivate: [StepsGuard]
   },
   {
     path: 'professional-data',
-    component: CustomizationComponent,
-    canActivate: [ProcessGuard]
+    component: ParameterizationComponent,
+    canActivate: [StepsGuard]
   },
   {
     path: 'academic-data',
-    component: CustomizationComponent,
-    canActivate: [ProcessGuard]
+    component: ParameterizationComponent,
+    canActivate: [StepsGuard]
   },
   {
     path: 'contract',
     component: ContractComponent,
-    canActivate: [ProcessGuard]
+    canActivate: [StepsGuard]
   },
   {
     path: 'finalization',
     component: FinalizationComponent,
-    canActivate: [ProcessGuard]
+    canActivate: [StepsGuard]
   },
-
-
   {
     path: 'not-found',
     component: NotFoundComponent

@@ -26,15 +26,9 @@
       </div>
     </div>
   </div>
-  <div class="row mt-5">
-    <div class="mb-2 col-md-3">
-      <button type="submit" class="btn btn-primary w-100">salvar</button>
-    </div>
-    <div class="mb-2 col-md-3 offset-md-3">
-      <button type="button" class="btn btn-primary w-100" (click)="back()">voltar</button>
-    </div>
-    <div class="mb-2 col-md-3">
-      <button type="button" class="btn btn-primary w-100" (click)="next()">próximo</button>
+  <div class="row my-5">
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="!stepForm.form.valid">salvar</button>
     </div>
   </div>
 </form>

@@ -7,17 +7,30 @@ export interface Process {
 }
 
 export interface Step {
-    id: string;
-    name: string;
+    codeName: string;
+    title: string;
     url: string;
-    type: StepType;
     order: number;
+    fields: Field[];
     completed: boolean;
     lastAcess?: Date;
     lastUpdate?: Date;
 }
 
-export enum StepType {
-    process = 1,
-    customization = 2
+export interface Field {
+    codeName: string;
+    label: string;
+    placeholder: string;
+    value: string;
+    required: boolean;
+    options: string[];
+    presentation: Presentation;
+}
+
+export interface Presentation {
+    mask: string;
+    pattern: string;
+    placeholder: string;
+    prefix: string;
+    sufix: string;
 }

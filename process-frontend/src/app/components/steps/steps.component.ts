@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { Process, Step } from 'src/app/core/process/process.model';
+import { filter, tap } from 'rxjs/operators';
+import { Step, Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 
 @Component({
@@ -18,13 +18,12 @@ export class StepsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.processService.currenrProcess
+    this.processService.current
       .pipe(
+        filter(process => Boolean(process)),
         tap((process) => {
           this.process = process;
-          if (process) {
-            this.steps = process.steps.sort((a, b) => a.order - b.order);
-          }
+          this.steps = process.steps.sort((a, b) => a.order - b.order);
         })
       )
       .subscribe();

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { ProcessService } from '../../core/process/process.service';
 
 @Component({
@@ -17,10 +16,10 @@ export class ProgressBarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.processService.currenrProcess
+    this.processService.current
       .pipe(
+        filter(process => Boolean(process)),
         tap((process) => {
-          if (!process) { return of({}); }
           const total = process.steps.length;
           const completed = process.steps.filter(s => s.completed).length;
           this.percentage = Math.round((completed / total) * 100);

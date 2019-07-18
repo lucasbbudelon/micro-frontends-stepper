@@ -1,48 +1,22 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <h1>Processos</h1>
+      <h1>Processo # {{process.id}}</h1>
     </div>
   </div>
   <div class="row mt-4">
     <div class="col-12">
-      <table class="table text-center">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">COUNT STEPS</th>
-            <th scope="col">CURRENT STEP</th>
-            <th scope="col">NEXT STEP</th>
-            <th scope="col">BACK STEP</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let process of processes">
-            <th scope="row">
-              <a href="/process?id={{process.id}}">
-                {{process.id}}
-              </a>
-            </th>
-            <td>
-              {{process.steps?.length}}
-            </td>
-            <td [class.text-success]="process.currentStep.completed">
-              {{process.currentStep?.id}}
-            </td>
-            <td [class.text-success]="process.nextStep?.completed">
-              {{process.nextStep?.id}}
-            </td>
-            <td [class.text-success]="process.backStep?.completed">
-              {{process.backStep?.id}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-3">
-      <button type="button" class="btn btn-primary w-100" (click)="add()">add</button>
+      <p>
+        Esta é a página inicial do processo, ela serve para redirecionar o usuário para a etapa atual. Você
+        pode esperar {{timeRedirection}} segundos e ser redirecionado automaticamente, ou clicar no botão abaixo.</p>
+      <hr class="my-4">
+      <p>
+        <b>OBS: </b>A etapa atual do processo é definida pela data de visualização, sendo assim, a última etapa
+        visualizada
+        é a etapa
+        atual.
+      </p>
+      <button class="btn btn-primary btn-lg mt-5" (click)="navigateToCurrentStep()">Ir para etapa atual</button>
     </div>
   </div>
 </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProcessService } from 'src/app/core/process/process.service';
 import { ActivatedRoute } from '@angular/router';
+import { tap, flatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-steps-navigation',
@@ -9,23 +10,33 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class StepsNavigationComponent implements OnInit {
 
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private processService: ProcessService
   ) { }
 
   ngOnInit() {
+
   }
 
   back() {
+    const currentRouter = this.activatedRoute.routeConfig.path;
     this.processService
-      .backStep(this.activatedRoute.routeConfig.path)
+      .getCurrent()
+      .pipe(
+        flatMap(process => this.processService.backStep(process, currentRouter))
+      )
       .subscribe();
   }
 
   next() {
+    const currentRouter = this.activatedRoute.routeConfig.path;
     this.processService
-      .nextStep(this.activatedRoute.routeConfig.path)
+      .getCurrent()
+      .pipe(
+        flatMap(process => this.processService.nextStep(process, currentRouter))
+      )
       .subscribe();
   }
 }
