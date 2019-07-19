@@ -17,11 +17,16 @@ export class AppService extends Socket {
     return this.httpClient.get<any>(url);
   }
 
-  nextStepEmit(process) {
-    this.emit('on-next-step', process);
-  }
+  save(process) {
+    const message = {
+      type: 'update-process',
+      date: new Date(),
+      app: 'micro-frontend-angular',
+      from: '',
+      device: '',
+      body: process
+    };
 
-  backStepEmit(process) {
-    this.emit('on-back-step', process);
+    this.emit('on-message', message);
   }
 }

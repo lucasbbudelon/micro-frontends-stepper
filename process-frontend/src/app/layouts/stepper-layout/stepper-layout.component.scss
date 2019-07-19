@@ -1,11 +1,11 @@
-@import "~bootstrap/scss/bootstrap";
+@import "src/sass/variables";
 
 .arrow {
   font-size: 4em;
   color: $primary;
 
   &:hover{
-    color: $secondary;
+    opacity: 0.7;
   }
 }
 

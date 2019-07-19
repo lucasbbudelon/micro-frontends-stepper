@@ -27,7 +27,7 @@ export class ParameterizationComponent implements OnInit {
       .pipe(
         tap((process) => {
           const currentRouter = this.activatedRoute.routeConfig.path;
-          this.step = this.processService.getStep(process, currentRouter);
+          this.step = process.steps.find(s => s.codeName === currentRouter);
           this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.step.url);
         })
       )

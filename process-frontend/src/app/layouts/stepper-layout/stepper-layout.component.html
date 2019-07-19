@@ -1,9 +1,9 @@
 <div class="container-fluid p-5" *ngIf="process">
   <div class="row">
     <div class="col-2 d-flex justify-content-center">
-      <div class="position-fixed">
-        <a *ngIf="process.backStep" [routerLink]="['/' + process.backStep.codeName]" preserveQueryParams>
-          <fa name="arrow-left" class="arrow" (click)="back()"></fa>
+      <div isStep class="position-fixed">
+        <a *ngIf="process.backStep" [routerLink]="['/process', process.id, process.backStep.codeName]">
+          <fa name="arrow-left" class="arrow"></fa>
         </a>
       </div>
     </div>
@@ -12,7 +12,7 @@
     </div>
     <div class="col-2 d-flex justify-content-center">
       <div class="position-fixed">
-        <a *ngIf="process.nextStep" [routerLink]="['/' + process.nextStep.codeName]" preserveQueryParams>
+        <a *ngIf="process.nextStep" [routerLink]="['/process', process.id, process.nextStep.codeName]">
           <fa name="arrow-right" class="arrow"></fa>
         </a>
       </div>

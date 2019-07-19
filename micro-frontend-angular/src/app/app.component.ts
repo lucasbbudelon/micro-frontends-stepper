@@ -23,11 +23,7 @@ export class AppComponent implements OnInit {
       .subscribe();
   }
 
-  back() {
-    this.appService.backStepEmit(this.process);
-  }
-
-  next() {
-    this.appService.nextStepEmit(this.process);
+  save() {
+    this.appService.save(this.process);
   }
 }

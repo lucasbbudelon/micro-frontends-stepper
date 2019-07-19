@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { tap, filter, distinctUntilChanged } from 'rxjs/operators';
-import { Step, Process } from 'src/app/core/process/process.model';
+import { catchError, finalize, flatMap, tap } from 'rxjs/operators';
+import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
+import { Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 
 @Component({
@@ -15,33 +16,43 @@ export class DynamicFormComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private backendFeedbackService: BackendFeedbackService,
     private processService: ProcessService
   ) { }
 
   ngOnInit() {
-    this.processService.getCurrent()
+    this.backendFeedbackService.showLoading();
+    this.processService.getCurrent(this.activatedRoute)
       .pipe(
-        tap(process => this.loadStep(process))
-      )
-      .subscribe();
-
-    this.processService.current
-      .pipe(
-        distinctUntilChanged(),
-        filter(process => Boolean(process)),
-        tap(process => this.loadStep(process))
+        tap(process => this.loadStep(process)),
+        flatMap(process => this.updateLastAcess(process)),
+        catchError(error => this.backendFeedbackService.handleError(error)),
+        finalize(() => this.backendFeedbackService.showLoading())
       )
       .subscribe();
   }
 
   submit() {
+    this.backendFeedbackService.showLoading();
+
+    this.step.lastUpdate = new Date();
     this.processService
-      .save(this.step)
+      .saveStep(this.step, { warnChange: true, moveNextStep: true })
+      .pipe(
+        catchError(error => this.backendFeedbackService.handleError(error)),
+        finalize(() => this.backendFeedbackService.showLoading())
+      )
       .subscribe();
   }
 
   private loadStep(process: Process) {
     const codeName = this.activatedRoute.snapshot.routeConfig.path;
     this.step = process.steps.find(s => s.codeName === codeName);
+  }
+
+  private updateLastAcess(process: Process) {
+    this.step.lastAcess = new Date();
+    return this.processService
+      .saveStep(this.step, { warnChange: true });
   }
 }

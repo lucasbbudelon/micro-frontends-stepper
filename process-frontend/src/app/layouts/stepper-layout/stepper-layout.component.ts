@@ -19,6 +19,13 @@ export class StepperLayoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    this.processService.getCurrent(this.activatedRoute)
+      .pipe(
+        tap(process => this.process = process)
+      )
+      .subscribe();
+
     this.processService.current
       .pipe(
         filter(process => Boolean(process)),
@@ -26,24 +33,4 @@ export class StepperLayoutComponent implements OnInit {
       )
       .subscribe();
   }
-
-  // back() {
-  //   const currentRouter = this.activatedRoute.routeConfig.path;
-  //   this.processService
-  //     .getCurrent()
-  //     .pipe(
-  //       flatMap(process => this.processService.backStep(process, currentRouter))
-  //     )
-  //     .subscribe();
-  // }
-
-  // next() {
-  //   const currentRouter = this.activatedRoute.routeConfig.path;
-  //   this.processService
-  //     .getCurrent()
-  //     .pipe(
-  //       flatMap(process => this.processService.nextStep(process, currentRouter))
-  //     )
-  //     .subscribe();
-  // }
 }

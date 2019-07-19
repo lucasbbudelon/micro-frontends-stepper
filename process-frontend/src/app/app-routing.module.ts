@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StepsGuard } from './components/steps/steps.guard';
+import { StepperLayoutComponent } from './layouts/stepper-layout/stepper-layout.component';
 import { ContractComponent } from './pages/contract/contract.component';
 import { DynamicFormComponent } from './pages/dynamic-form/dynamic-form.component';
 import { ErrorComponent } from './pages/error/error.component';
@@ -9,7 +9,6 @@ import { ListComponent } from './pages/list/list.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ParameterizationComponent } from './pages/parameterization/parameterization.component';
 import { ProcessComponent } from './pages/process/process.component';
-import { StepperLayoutComponent } from './layouts/stepper-layout/stepper-layout.component';
 
 const routes: Routes = [
   {
@@ -26,47 +25,43 @@ const routes: Routes = [
     component: ProcessComponent
   },
 
-
   {
-    path: '',
+    path: 'process/:processId',
     component: StepperLayoutComponent,
     children: [
       {
+        path: 'current-step',
+        component: ProcessComponent
+      },
+      {
         path: 'document',
-        component: DynamicFormComponent,
-        canActivate: [StepsGuard]
+        component: DynamicFormComponent
       },
       {
         path: 'basic-data',
-        component: DynamicFormComponent,
-        canActivate: [StepsGuard]
+        component: DynamicFormComponent
       },
       {
         path: 'address',
-        component: DynamicFormComponent,
-        canActivate: [StepsGuard]
+        component: DynamicFormComponent
       },
       {
         path: 'professional-data',
-        component: ParameterizationComponent,
-        canActivate: [StepsGuard]
+        component: ParameterizationComponent
       },
       {
         path: 'academic-data',
-        component: ParameterizationComponent,
-        canActivate: [StepsGuard]
+        component: ParameterizationComponent
       },
       {
         path: 'contract',
-        component: ContractComponent,
-        canActivate: [StepsGuard]
-      },
+        component: ContractComponent
+      }
     ]
   },
   {
     path: 'finalization',
-    component: FinalizationComponent,
-    canActivate: [StepsGuard]
+    component: FinalizationComponent
   },
   {
     path: 'not-found',

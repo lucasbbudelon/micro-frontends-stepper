@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="process">
   <div class="row">
     <div class="col-12">
       <h1>Processo # {{process.id}}</h1>
@@ -8,13 +8,11 @@
     <div class="col-12">
       <p>
         Esta é a página inicial do processo, ela serve para redirecionar o usuário para a etapa atual. Você
-        pode esperar {{timeRedirection}} segundos e ser redirecionado automaticamente, ou clicar no botão abaixo.</p>
+        pode esperar {{missingRime}} segundos e ser redirecionado automaticamente, ou clicar no botão abaixo.</p>
       <hr class="my-4">
       <p>
         <b>OBS: </b>A etapa atual do processo é definida pela data de visualização, sendo assim, a última etapa
-        visualizada
-        é a etapa
-        atual.
+        visualizada é a etapa atual.
       </p>
       <button class="btn btn-primary btn-lg mt-5" (click)="navigateToCurrentStep()">Ir para etapa atual</button>
     </div>

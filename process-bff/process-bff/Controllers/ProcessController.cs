@@ -72,7 +72,7 @@ namespace process_bff.Controllers
             {
                 return NotFound();
             }
-            
+
             return Ok(step);
         }
 
@@ -170,7 +170,7 @@ namespace process_bff.Controllers
                             {
                                 CodeName = "name",
                                 Label = "Nome completo",
-                                Placeholder = "",
+                                Placeholder = "Ex.: João Silva dos Santos",
                                 Required = true,
                                 Type = "text"
                             },
@@ -178,7 +178,7 @@ namespace process_bff.Controllers
                             {
                                 CodeName = "mother-name",
                                 Label = "Nome da mãe",
-                                Placeholder = "",
+                                Placeholder = "Ex.: Maria da Silva",
                                 Required = true,
                                 Type = "text"
                             },
@@ -186,28 +186,21 @@ namespace process_bff.Controllers
                             {
                                 CodeName = "father-name",
                                 Label = "Nome do pai",
-                                Placeholder = "",
-                                Required = true,
+                                Placeholder = "Ex.: José dos Santos",
+                                Required = false,
                             },
                             new Field()
                             {
                                 CodeName = "profession",
                                 Label = "Profissão",
-                                Placeholder = "",
+                                Placeholder = "Ex.: Desenvolvedor de Software",
                                 Required = true,
-                            },
-                            new Field()
-                            {
-                                CodeName = "nationality",
-                                Label = "Nacionalidade",
-                                Placeholder = "",
-                                Required = false,
                             },
                             new Field()
                             {
                                 CodeName = "naturalness",
                                 Label = "Naturalidade",
-                                Placeholder = "",
+                                Placeholder = "Ex.: Porto Alegre, Brasil",
                                 Required = false,
                             }
                         }
@@ -216,7 +209,50 @@ namespace process_bff.Controllers
                     {
                         CodeName = "address",
                         Title = "Endereço",
-                        Order = 3
+                        Order = 3,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "address-description",
+                                Label = "Endereço",
+                                Placeholder = "Ex.: Av. Ipiranga, 6681",
+                                Required = true,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "address-complement",
+                                Label = "Complemento",
+                                Placeholder = "Ex.: TECNOPUC, prédio 32",
+                                Required = false,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "address-neighborhood",
+                                Label = "Bairro",
+                                Placeholder = "Ex.: Partenon",
+                                Required = true,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "address-city",
+                                Label = "Cidade",
+                                Placeholder = "Ex.: Porto Alegre",
+                                Required = true,
+                                Type = "text"
+                            },
+                            new Field()
+                            {
+                                CodeName = "address-state",
+                                Label = "Estado",
+                                Placeholder = "Ex.: Rio Grande do Sul",
+                                Required = true,
+                                Type = "text"
+                            }
+                        }
                     },
                     new Step()
                     {
@@ -236,6 +272,7 @@ namespace process_bff.Controllers
                     {
                         CodeName = "contract",
                         Title = "Contrato",
+                        Url = "http://localhost:4300",
                         Order = 6
                     }
                 };

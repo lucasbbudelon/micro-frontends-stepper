@@ -1,8 +1,9 @@
-@import "~bootstrap/scss/bootstrap";
+
+@import "src/sass/variables";
 
 .ng-valid[required],
 .ng-valid.required {
-  border-left: 5px solid $primary
+  border-left: 5px solid $primary;
 }
 
 .ng-invalid:not(form) {

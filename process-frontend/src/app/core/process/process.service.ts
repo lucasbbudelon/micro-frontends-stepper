@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
-import { catchError, tap, flatMap } from 'rxjs/operators';
+import { filter, flatMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { Message } from '../messenger/messenger.model';
 import { MessengerService } from '../messenger/messenger.service';
 import { Process, Step } from './process.model';
 
@@ -13,40 +14,45 @@ import { Process, Step } from './process.model';
 export class ProcessService {
 
   public current = new BehaviorSubject<Process>(null);
-  public processes = new BehaviorSubject<Process[]>(null);
+  public all = new BehaviorSubject<Process[]>(null);
 
   constructor(
     private router: Router,
     private httpClient: HttpClient,
     private messengerService: MessengerService
-  ) { }
+  ) {
+    this
+      .messageListening()
+      .subscribe();
+  }
 
   getAll() {
     const url = `${environment.bff}/process`;
     return this.httpClient
       .get<Process[]>(url)
-      .pipe(tap(processes => this.processes.next(processes)));
+      .pipe(tap(processes => this.all.next(processes)));
   }
 
-  getCurrent() {
+  getCurrent(activatedRoute: ActivatedRoute = null) {
 
-    if (this.current.value) {
-      return of(this.current.value);
+    const currentProcess = this.current.value;
+
+    if (currentProcess) {
+      return of(currentProcess);
+    } else {
+      const id = activatedRoute ? activatedRoute.snapshot.paramMap.get('processId') : null;
+      return id
+        ? this.get(id)
+        : of(currentProcess);
     }
-
-    const id = this.getIdByQueryString();
-
-    return id
-      ? this.get(id)
-      : of(null);
   }
 
-  get(id: number | string) {
+  get(id: string) {
     const url = `${environment.bff}/process/${id}`;
     return this.httpClient
       .get<Process>(url)
       .pipe(
-        tap(process => this.updateCurrent(process))
+        tap(process => this.current.next(process))
       );
   }
 
@@ -55,110 +61,91 @@ export class ProcessService {
     return this.httpClient
       .post<Process>(url, {})
       .pipe(
-        tap(process => this.messengerService.changeProcessEmit(process))
+        tap(process => this.emitUpdateProcess(process))
       );
   }
 
-  patch(step: Step) {
+  saveStep(step: Step, { warnChange = false, moveNextStep = false }) {
     return this
       .getCurrent()
       .pipe(
-        flatMap((process) => {
-          const url = `${environment.bff}/process/${process.id}/step/${step.codeName}`;
+        flatMap((currentProcess) => {
+          const url = `${environment.bff}/process/${currentProcess.id}/step/${step.codeName}`;
           return this.httpClient
             .patch<Process>(url, step)
             .pipe(
-              tap(p => this.updateCurrent(p))
+              tap((process) => {
+                if (warnChange) {
+                  this.emitUpdateProcess(process);
+                }
+                if (moveNextStep) {
+                  this.emitMoveStepper(process.id, process.nextStep.codeName);
+                }
+              })
             );
         })
       );
-  }
-
-  updateLastAcess(codeNameStep: string) {
-    return this
-      .getCurrent()
-      .pipe(
-        flatMap((process) => {
-          const step = this.getStep(process, codeNameStep);
-          step.lastAcess = new Date();
-          return this
-            .patch(step)
-            .pipe(
-              tap(p => this.updateCurrent(p))
-            );
-        })
-      );
-  }
-
-  save(step: Step) {
-    step.lastUpdate = new Date();
-    return this.patch(step);
   }
 
   navigateToStep(processId: number, codeName: string) {
-    this.router.navigate([codeName], { queryParams: { process: processId } });
+    this.router.navigate(['/process', processId, codeName]);
   }
 
-
-  backStep(process: Process, codeNameStep: string) {
-
-    const step = this.getStep(process, codeNameStep);
-
-    step.lastUpdate = new Date();
-
-    return this.patch(step)
+  private messageListening() {
+    return this.messengerService
+      .receptor()
       .pipe(
-        tap(p => this.messengerService.backStepEmit(p))
+        tap((message) => {
+          switch (message.subject) {
+            case 'update-process':
+              this.handleUpdateProcess(message);
+              break;
+            case 'move-stepper':
+              this.handleMoveStepper(message);
+              break;
+            default:
+              break;
+          }
+        })
       );
   }
 
-  nextStep(process: Process, codeNameStep: string) {
+  private handleUpdateProcess(message: Message) {
 
-    const step = this.getStep(process, codeNameStep);
+    const { id } = message.body;
 
-    step.lastUpdate = new Date();
-
-    return this.patch(step)
+    const updateCurrent = this.getCurrent()
       .pipe(
-        tap(p => this.messengerService.nextStepEmit(p))
+        filter(process => Boolean(process) && process.id === id),
+        flatMap(process => this.get(id))
+      );
+
+    this.getAll()
+      .pipe(
+        flatMap(() => updateCurrent)
+      )
+      .subscribe();
+  }
+
+  private emitUpdateProcess(process: Process) {
+    const message = this.messengerService.getMessage('update-process', process);
+    this.messengerService.send(message);
+  }
+
+  private handleMoveStepper(message: Message) {
+
+    const { processId, codeName } = message.body;
+
+    this.getCurrent()
+      .pipe(
+        filter(process => Boolean(process) && process.id === processId),
+        tap(() => this.navigateToStep(processId, codeName))
       );
   }
 
-  handleNextStep(process: Process) {
-    if (process.id === this.current.value.id) {
-      this.navigateToStep(process.id, process.nextStep.codeName);
-    }
-  }
-
-  handleBackStep(process: Process) {
-    if (process.id === this.current.value.id) {
-      this.navigateToStep(process.id, process.backStep.codeName);
-    }
-  }
-
-  handleChangeProcess(process: Process) {
-    console.log(`${(new Date()).toLocaleTimeString()}: change-process # ${process.id}`);
-    if (!this.current.value || this.current.value.id === process.id) {
-      this.get(process.id).subscribe();
-    }
-  }
-
-  keepProcess() {
-    this.messengerService.blockProcessEmit(this.current.value);
-    this.messengerService.unlockProcessEmit(this.current.value);
-  }
-
-  getStep(process: Process, codeNameStep: string) {
-    return process.steps.find(s => s.codeName === codeNameStep);
-  }
-
-  private getIdByQueryString() {
-    const id = window.location.search.split('=')[1];
-    return id;
-  }
-
-  private updateCurrent(process: Process) {
-    this.messengerService.changeProcessEmit(process);
-    this.current.next(process);
+  private emitMoveStepper(processId: number, codeName: string) {
+    const body = { processId, codeName };
+    const message = this.messengerService.getMessage('move-stepper', body);
+    this.messengerService.send(message);
   }
 }

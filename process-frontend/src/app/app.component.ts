@@ -20,18 +20,18 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
-    this.messengerService.nextStepListening()
-      .pipe(tap(process => this.processService.handleNextStep(process)))
-      .subscribe();
+    // this.messengerService.nextStepListening()
+    //   .pipe(tap(process => this.processService.handleNextStep(process)))
+    //   .subscribe();
 
-    this.messengerService.backStepListening()
-      .pipe(tap(process => this.processService.handleBackStep(process)))
-      .subscribe();
+    // this.messengerService.backStepListening()
+    //   .pipe(tap(process => this.processService.handleBackStep(process)))
+    //   .subscribe();
 
-    this.messengerService.blockProcessListening()
-      .pipe(tap(() => this.block = true))
-      .subscribe();
+    // this.messengerService.blockProcessListening()
+    //   .pipe(tap(() => this.block = true))
+    //   .subscribe();
 
-    this.processService.keepProcess();
+    // this.processService.keepProcess();
   }
 }

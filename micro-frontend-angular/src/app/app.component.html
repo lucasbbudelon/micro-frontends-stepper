@@ -1,7 +1,7 @@
 <div class="container-fluid" *ngIf="process">
   <div class="row">
     <div class="col-12">
-      <h1>Dados Profissionais</h1>
+      <h1>Dados Profissionais (Angular)</h1>
     </div>
   </div>
   <div class="row mt-4">
@@ -12,12 +12,9 @@
       </ul>
     </div>
   </div>
-  <div class="row mt-5">
-    <div class="col-md-2 col col-sm-6">
-      <button type="button" class="btn btn-primary w-100" (click)="back()">voltar</button>
-    </div>
-    <div class="col-md-2 col-sm-6">
-      <button type="button" class="btn btn-primary w-100" (click)="next()">próximo</button>
+  <div class="row my-5">
+    <div class="col-12">
+      <button type="button" class="btn btn-primary w-100" (click)="save()">salvar</button>
     </div>
   </div>
 </div>
