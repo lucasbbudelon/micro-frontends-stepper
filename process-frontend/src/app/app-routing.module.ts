@@ -46,7 +46,7 @@ const routes: Routes = [
         component: DynamicFormComponent
       },
       {
-        path: 'professional-data',
+        path: 'promotional-package',
         component: ParameterizationComponent
       },
       {

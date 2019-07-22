@@ -27,7 +27,7 @@ export class DynamicFormComponent implements OnInit {
         tap(process => this.loadStep(process)),
         flatMap(process => this.updateLastAcess(process)),
         catchError(error => this.backendFeedbackService.handleError(error)),
-        finalize(() => this.backendFeedbackService.showLoading())
+        finalize(() => this.backendFeedbackService.hideLoading())
       )
       .subscribe();
   }
@@ -40,7 +40,7 @@ export class DynamicFormComponent implements OnInit {
       .saveStep(this.step, { warnChange: true, moveNextStep: true })
       .pipe(
         catchError(error => this.backendFeedbackService.handleError(error)),
-        finalize(() => this.backendFeedbackService.showLoading())
+        finalize(() => this.backendFeedbackService.hideLoading())
       )
       .subscribe();
   }

@@ -1,4 +1,5 @@
 export interface Message {
+    date: Date;
     app: string;
     device: string;
     subject: string;

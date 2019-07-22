@@ -3,7 +3,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 import { ActivatedRoute } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { tap, flatMap, finalize } from 'rxjs/operators';
+import { timer, Observable } from 'rxjs';
+import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 
 @Component({
   selector: 'app-parameterization',
@@ -18,6 +20,7 @@ export class ParameterizationComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
+    private backendFeedbackService: BackendFeedbackService,
     private processService: ProcessService
   ) { }
 
@@ -27,8 +30,11 @@ export class ParameterizationComponent implements OnInit {
       .pipe(
         tap((process) => {
           const currentRouter = this.activatedRoute.routeConfig.path;
-          this.step = process.steps.find(s => s.codeName === currentRouter);
-          this.url = this.sanitizer.bypassSecurityTrustResourceUrl(this.step.url);
+          const step = process.steps.find(s => s.codeName === currentRouter);
+          const url = `${step.url}?process=${process.id}`;
+          this.step = step;
+          this.url = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+          this.processService.waitOpeningStep(step);
         })
       )
       .subscribe();

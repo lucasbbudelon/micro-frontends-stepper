@@ -1,20 +1,16 @@
 <div class="container-fluid p-5" *ngIf="process">
   <div class="row">
     <div class="col-2 d-flex justify-content-center">
-      <div isStep class="position-fixed">
-        <a *ngIf="process.backStep" [routerLink]="['/process', process.id, process.backStep.codeName]">
-          <fa name="arrow-left" class="arrow"></fa>
-        </a>
+      <div class="position-fixed" *ngIf="process.backStep" [title]="process.backStep.title">
+        <fa name="arrow-left" class="arrow" (click)="back()"></fa>
       </div>
     </div>
     <div class="col-5">
       <router-outlet></router-outlet>
     </div>
     <div class="col-2 d-flex justify-content-center">
-      <div class="position-fixed">
-        <a *ngIf="process.nextStep" [routerLink]="['/process', process.id, process.nextStep.codeName]">
-          <fa name="arrow-right" class="arrow"></fa>
-        </a>
+      <div class="position-fixed" *ngIf="process.nextStep" [title]="process.nextStep.title">
+        <fa name="arrow-right" class="arrow" (click)="next()"></fa>
       </div>
     </div>
     <div class="col-3 d-flex justify-content-center">
@@ -29,4 +25,3 @@
     </div>
   </div>
 </div>
-<!-- <div *ngIf="block" class="block"></div> -->

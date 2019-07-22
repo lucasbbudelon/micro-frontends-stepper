@@ -51,5 +51,6 @@ namespace Model
                 }
             }
         }
+        public DateTime? LastUpdate { get; set; }
     }
 }

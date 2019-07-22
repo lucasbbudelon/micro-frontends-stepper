@@ -22,6 +22,7 @@ export class MessengerService {
 
   getMessage(subject: string, body: any): Message {
     return {
+      date: new Date(),
       app: 'process-frontend',
       device: '',
       subject,

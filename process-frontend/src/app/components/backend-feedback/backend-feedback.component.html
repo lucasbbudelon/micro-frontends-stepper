@@ -1,3 +1,36 @@
-<p>
-  backend-feedback works!
-</p>
+<div *ngIf="loading" class="loading">
+  <div class="lds-ring">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+  <span class="alert-inner--text"><strong>Sucesso!</strong> {{successMessage}}</span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="backendFeedbackService.hideSuccessMessage()">
+    <span aria-hidden="true">×</span>
+  </button>
+</div>
+
+<div *ngIf="infoMessage" class="alert alert-info alert-dismissible fade show" role="alert">
+  <span class="alert-inner--text"><strong>Info!</strong> {{infoMessage}}</span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="backendFeedbackService.hideInfoMessage()">
+    <span aria-hidden="true">×</span>
+  </button>
+</div>
+
+<div *ngIf="alertMessage" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <span class="alert-inner--text"><strong>Atenção!</strong> {{alertMessage}}</span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="backendFeedbackService.hideAlertMessage()">
+    <span aria-hidden="true">×</span>
+  </button>
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <span class="alert-inner--text"><strong>Ops!</strong> {{errorMessage}}</span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="backendFeedbackService.hideErrorMessage()">
+    <span aria-hidden="true">×</span>
+  </button>
+</div>

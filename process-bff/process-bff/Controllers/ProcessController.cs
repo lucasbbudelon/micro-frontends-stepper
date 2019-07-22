@@ -82,6 +82,7 @@ namespace process_bff.Controllers
         {
             body.Id = (new Random()).Next(111, 999);
             body.Steps = GetSteps();
+            body.LastUpdate = DateTime.Now;
 
             _listProcess.Add(body);
 
@@ -101,6 +102,9 @@ namespace process_bff.Controllers
             else
             {
                 _listProcess.RemoveAll(p => p.Id == id);
+
+                body.LastUpdate = DateTime.Now;
+
                 _listProcess.Add(body);
 
                 return Ok(process);
@@ -123,6 +127,7 @@ namespace process_bff.Controllers
 
                 process.Steps.RemoveAll(s => s.CodeName.Equals(codeName));
                 process.Steps.Add(step);
+                process.LastUpdate = DateTime.Now;
 
                 _listProcess.Add(process);
 
@@ -263,10 +268,18 @@ namespace process_bff.Controllers
                     },
                     new Step()
                     {
-                        CodeName = "professional-data",
-                        Title = "Dados Profissionais",
+                        CodeName = "promotional-package",
+                        Title = "Pacote promocional",
                         Url = "http://localhost:4500",
-                        Order = 5
+                        Order = 5,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "package-code",
+                                Required = true
+                            }
+                        }
                     },
                     new Step()
                     {

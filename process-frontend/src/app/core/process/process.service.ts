@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
-import { filter, flatMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, of, Subscription, timer } from 'rxjs';
+import { filter, finalize, flatMap, tap } from 'rxjs/operators';
+import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { environment } from 'src/environments/environment';
 import { Message } from '../messenger/messenger.model';
 import { MessengerService } from '../messenger/messenger.service';
@@ -16,9 +17,12 @@ export class ProcessService {
   public current = new BehaviorSubject<Process>(null);
   public all = new BehaviorSubject<Process[]>(null);
 
+  private waitOpeningStepTimerSubscription: Subscription;
+
   constructor(
     private router: Router,
     private httpClient: HttpClient,
+    private backendFeedbackService: BackendFeedbackService,
     private messengerService: MessengerService
   ) {
     this
@@ -47,7 +51,7 @@ export class ProcessService {
     }
   }
 
-  get(id: string) {
+  get(id: number | string) {
     const url = `${environment.bff}/process/${id}`;
     return this.httpClient
       .get<Process>(url)
@@ -87,8 +91,31 @@ export class ProcessService {
       );
   }
 
-  navigateToStep(processId: number, codeName: string) {
-    this.router.navigate(['/process', processId, codeName]);
+  navigateToStep(process: Process, step: Step) {
+    this.router.navigate(['/process', process.id, step.codeName]);
+  }
+
+  waitOpeningStep(step: Step) {
+
+    this.backendFeedbackService.showLoading();
+
+    this.waitOpeningStepTimerSubscription = timer(3000)
+      .pipe(
+        flatMap(() => this.getCurrent()),
+        flatMap((process) => {
+
+          const message = `Não foi possível carregar o conteúdo da etapa "${step.title}",
+           você será redirecionado para a etapa atual do processo.`;
+
+          return this.backendFeedbackService
+            .showAlertMessage(message)
+            .pipe(
+              tap(() => this.navigateToStep(process, process.currentStep))
+            );
+        }),
+        finalize(() => this.backendFeedbackService.hideLoading())
+      )
+      .subscribe();
   }
 
   private messageListening() {
@@ -102,6 +129,9 @@ export class ProcessService {
               break;
             case 'move-stepper':
               this.handleMoveStepper(message);
+              break;
+            case 'loading-step':
+              this.handleLoadingStep(message);
               break;
             default:
               break;
@@ -140,12 +170,25 @@ export class ProcessService {
       .pipe(
         filter(process => Boolean(process) && process.id === processId),
         tap(() => this.navigateToStep(processId, codeName))
-      );
+      )
+      .subscribe();
   }
 
   private emitMoveStepper(processId: number, codeName: string) {
     const body = { processId, codeName };
     const message = this.messengerService.getMessage('move-stepper', body);
     this.messengerService.send(message);
+  }
+
+  private handleLoadingStep(message: Message) {
+
+    const { processId } = message.body;
+
+    this.getCurrent()
+      .pipe(
+        filter(process => Boolean(process) && process.id === processId),
+        tap(() => this.waitOpeningStepTimerSubscription.unsubscribe())
+      )
+      .subscribe();
   }
 }

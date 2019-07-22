@@ -4,6 +4,7 @@ export interface Process {
     currentStep: Step;
     nextStep: Step;
     backStep: Step;
+    lastUpdate?: Date;
 }
 
 export interface Step {

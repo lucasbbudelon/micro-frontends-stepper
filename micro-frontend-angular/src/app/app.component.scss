@@ -1,0 +1,16 @@
+@import "~bootstrap/scss/bootstrap";
+
+.card {
+  cursor: pointer;
+}
+
+.selected {
+  border: 2px solid $primary;
+}
+
+
+@media screen and (max-width: 995px) {
+  .wrapper-image {
+    height: 10em;
+  }
+}

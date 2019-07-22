@@ -42,7 +42,7 @@ export class ProcessComponent implements OnInit {
 
 
   navigateToCurrentStep() {
-    this.processService.navigateToStep(this.process.id, this.process.currentStep.codeName);
+    this.processService.navigateToStep(this.process, this.process.currentStep);
   }
 
   private timerToRedirect() {

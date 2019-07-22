@@ -1,20 +1,37 @@
-<div class="container-fluid" *ngIf="process">
+<div class="container-fluid" *ngIf="currentProcess">
   <div class="row">
     <div class="col-12">
-      <h1>Dados Profissionais (Angular)</h1>
+      <h1>{{currentStep.title}} (Angular)</h1>
+      <small>Última visualização: {{currentStep.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+      <small *ngIf="currentStep.lastUpdate"> | Última atualização:
+        {{currentStep.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-12">
-      <ul>
-        <li>CV</li>
-        <li>Portifólio</li>
-      </ul>
+    <div class="col-4" *ngFor="let package of packages">
+      <div class="card" [class.selected]="fieldStep.value === package.code" (click)="selectPackage(package.code)">
+        <div class="wrapper-image">
+          <img class="card-img-top" [src]="package.image" [alt]="package.title" />
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{package.title}}</h5>
+          <p class="card-text">{{package.price | currency}}</p>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row my-5">
     <div class="col-12">
-      <button type="button" class="btn btn-primary w-100" (click)="save()">salvar</button>
+      <button type="button" class="btn btn-primary w-100" [disabled]="!fieldStep.value"
+        (click)="submit()">salvar</button>
+    </div>
+  </div>
+
+</div>
+<div class="container-fluid" *ngIf="!currentProcess">
+  <div class="row">
+    <div class="col-12">
+      <h1>Processo não encontrado!</h1>
     </div>
   </div>
 </div>
