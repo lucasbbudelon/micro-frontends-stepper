@@ -3,7 +3,7 @@
 
 .ng-valid[required],
 .ng-valid.required {
-  border-left: 5px solid $primary;
+  border-left: 5px solid $success;
 }
 
 .ng-invalid:not(form) {

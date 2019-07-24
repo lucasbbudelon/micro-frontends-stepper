@@ -3,6 +3,7 @@
     <a [routerLink]="['/process', process.id, step.codeName]" routerLinkActive="currenr-step">
       <div class="circle" [class.completed]="step.completed"></div>
       <span class="name">{{step.title}}</span>
+      <fa *ngIf="step.completed" name="check-circle" class="ml-2 text-success"></fa>
     </a>
   </li>
 </ul>

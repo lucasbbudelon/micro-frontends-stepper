@@ -23,6 +23,8 @@ export class StepperLayoutComponent implements OnInit {
 
   ngOnInit() {
 
+    this.initOnkeydown();
+
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
         tap(process => this.process = process)
@@ -43,5 +45,23 @@ export class StepperLayoutComponent implements OnInit {
 
   back() {
     this.processService.navigateToStep(this.process, this.process.backStep);
+  }
+
+  private initOnkeydown() {
+    document.onkeydown = (e) => {
+
+      if (!e.ctrlKey) { return; }
+
+      switch (e.key) {
+        case 'ArrowLeft':
+          this.back();
+          break;
+        case 'ArrowRight':
+          this.next();
+          break;
+        default:
+          break;
+      }
+    };
   }
 }

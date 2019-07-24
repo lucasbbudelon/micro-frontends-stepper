@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, finalize, flatMap, tap } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
@@ -10,7 +10,7 @@ import { ProcessService } from 'src/app/core/process/process.service';
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnInit, AfterContentInit {
 
   public step: Step;
 
@@ -29,6 +29,14 @@ export class DynamicFormComponent implements OnInit {
         finalize(() => this.backendFeedbackService.hideLoading())
       )
       .subscribe();
+  }
+
+  public ngAfterContentInit() {
+    setTimeout(() => {
+      const form = window.document.forms[0];
+      const element: any = form.elements[0];
+      element.focus();
+    }, 500);
   }
 
   submit() {

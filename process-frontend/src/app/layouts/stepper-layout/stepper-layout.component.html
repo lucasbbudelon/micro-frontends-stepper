@@ -1,20 +1,20 @@
 <div class="container-fluid p-5" *ngIf="process">
   <div class="row">
-    <div class="col-2 d-flex justify-content-center">
+    <div class="col-1 col-xl-2 d-flex justify-content-center">
       <div class="position-fixed" *ngIf="process.backStep" [title]="process.backStep.title">
         <fa name="arrow-left" class="arrow" (click)="back()"></fa>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-10 col-md-7 col-xl-5">
       <router-outlet></router-outlet>
     </div>
-    <div class="col-2 d-flex justify-content-center">
+    <div class="col-1 col-xl-2 d-flex justify-content-center">
       <div class="position-fixed" *ngIf="process.nextStep" [title]="process.nextStep.title">
         <fa name="arrow-right" class="arrow" (click)="next()"></fa>
       </div>
     </div>
-    <div class="col-3 d-flex justify-content-center">
-      <div class="position-fixed">
+    <div class="col-3 d-sm-none d-md-block d-flex justify-content-center">
+      <div class="position-fixed hidden-sm-down">
         <app-steps></app-steps>
       </div>
     </div>

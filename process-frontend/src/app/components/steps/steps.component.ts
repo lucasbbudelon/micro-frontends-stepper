@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { filter, tap } from 'rxjs/operators';
-import { Step, Process } from 'src/app/core/process/process.model';
+import { Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 
 @Component({
