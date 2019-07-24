@@ -8,14 +8,14 @@
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-4" *ngFor="let package of packages">
-      <div class="card" [class.selected]="fieldStep.value === package.code" (click)="selectPackage(package.code)">
+    <div class="col-4" *ngFor="let item of items">
+      <div class="card" [class.selected]="fieldStep.value === item.code" (click)="selectItem(item.code)">
         <div class="wrapper-image">
-          <img class="card-img-top" [src]="package.image" [alt]="package.title" />
+          <img class="card-img-top" [src]="item.image" [alt]="item.title" />
         </div>
         <div class="card-body">
-          <h5 class="card-title">{{package.title}}</h5>
-          <p class="card-text">{{package.price | currency}}</p>
+          <h5 class="card-title">{{item.title}}</h5>
+          <p class="card-text">{{item.description | currency}}</p>
         </div>
       </div>
     </div>
@@ -26,7 +26,6 @@
         (click)="submit()">salvar</button>
     </div>
   </div>
-
 </div>
 <div class="container-fluid" *ngIf="!currentProcess">
   <div class="row">

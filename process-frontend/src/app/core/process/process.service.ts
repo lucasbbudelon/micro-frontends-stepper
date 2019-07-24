@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, of, Subscription, timer } from 'rxjs';
-import { filter, finalize, flatMap, tap } from 'rxjs/operators';
-import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
+import { BehaviorSubject, of } from 'rxjs';
+import { filter, flatMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Message } from '../messenger/messenger.model';
 import { MessengerService } from '../messenger/messenger.service';
@@ -16,13 +15,11 @@ export class ProcessService {
 
   public current = new BehaviorSubject<Process>(null);
   public all = new BehaviorSubject<Process[]>(null);
-
-  private waitOpeningStepTimerSubscription: Subscription;
+  public stepRendered = new BehaviorSubject<string>(null);
 
   constructor(
     private router: Router,
     private httpClient: HttpClient,
-    private backendFeedbackService: BackendFeedbackService,
     private messengerService: MessengerService
   ) {
     this
@@ -65,7 +62,7 @@ export class ProcessService {
     return this.httpClient
       .post<Process>(url, {})
       .pipe(
-        tap(process => this.emitUpdateProcess(process))
+        tap(process => this.emitUpdateProcess(process.id))
       );
   }
 
@@ -80,10 +77,10 @@ export class ProcessService {
             .pipe(
               tap((process) => {
                 if (warnChange) {
-                  this.emitUpdateProcess(process);
+                  this.emitUpdateProcess(process.id);
                 }
                 if (moveNextStep) {
-                  this.emitMoveStepper(process.id, process.nextStep.codeName);
+                  this.emitMoveNextStep(process.id);
                 }
               })
             );
@@ -91,31 +88,14 @@ export class ProcessService {
       );
   }
 
-  navigateToStep(process: Process, step: Step) {
-    this.router.navigate(['/process', process.id, step.codeName]);
+  updateLastAcessStep(step: Step) {
+    step.lastAcess = new Date();
+    return this
+      .saveStep(step, { warnChange: true });
   }
 
-  waitOpeningStep(step: Step) {
-
-    this.backendFeedbackService.showLoading();
-
-    this.waitOpeningStepTimerSubscription = timer(3000)
-      .pipe(
-        flatMap(() => this.getCurrent()),
-        flatMap((process) => {
-
-          const message = `Não foi possível carregar o conteúdo da etapa "${step.title}",
-           você será redirecionado para a etapa atual do processo.`;
-
-          return this.backendFeedbackService
-            .showAlertMessage(message)
-            .pipe(
-              tap(() => this.navigateToStep(process, process.currentStep))
-            );
-        }),
-        finalize(() => this.backendFeedbackService.hideLoading())
-      )
-      .subscribe();
+  navigateToStep(process: Process, step: Step) {
+    this.router.navigate(['/process', process.id, step.codeName]);
   }
 
   private messageListening() {
@@ -127,11 +107,11 @@ export class ProcessService {
             case 'update-process':
               this.handleUpdateProcess(message);
               break;
-            case 'move-stepper':
-              this.handleMoveStepper(message);
+            case 'move-next-step':
+              this.handleMoveNextStep(message);
               break;
-            case 'loading-step':
-              this.handleLoadingStep(message);
+            case 'step-rendered':
+              this.handleStepRendered(message);
               break;
             default:
               break;
@@ -142,12 +122,12 @@ export class ProcessService {
 
   private handleUpdateProcess(message: Message) {
 
-    const { id } = message.body;
+    const { processId } = message.body;
 
     const updateCurrent = this.getCurrent()
       .pipe(
-        filter(process => Boolean(process) && process.id === id),
-        flatMap(process => this.get(id))
+        filter(process => Boolean(process) && process.id === processId),
+        flatMap(process => this.get(processId))
       );
 
     this.getAll()
@@ -157,37 +137,38 @@ export class ProcessService {
       .subscribe();
   }
 
-  private emitUpdateProcess(process: Process) {
-    const message = this.messengerService.getMessage('update-process', process);
+  private emitUpdateProcess(processId: number) {
+    const body = { processId };
+    const message = this.messengerService.getMessage('update-process', body);
     this.messengerService.send(message);
   }
 
-  private handleMoveStepper(message: Message) {
-
-    const { processId, codeName } = message.body;
-
-    this.getCurrent()
-      .pipe(
-        filter(process => Boolean(process) && process.id === processId),
-        tap(() => this.navigateToStep(processId, codeName))
-      )
-      .subscribe();
-  }
-
-  private emitMoveStepper(processId: number, codeName: string) {
-    const body = { processId, codeName };
-    const message = this.messengerService.getMessage('move-stepper', body);
-    this.messengerService.send(message);
-  }
-
-  private handleLoadingStep(message: Message) {
+  private handleMoveNextStep(message: Message) {
 
     const { processId } = message.body;
 
     this.getCurrent()
       .pipe(
         filter(process => Boolean(process) && process.id === processId),
-        tap(() => this.waitOpeningStepTimerSubscription.unsubscribe())
+        tap((process) => this.navigateToStep(process, process.nextStep))
+      )
+      .subscribe();
+  }
+
+  private emitMoveNextStep(processId: number) {
+    const body = { processId };
+    const message = this.messengerService.getMessage('move-next-step', body);
+    this.messengerService.send(message);
+  }
+
+  private handleStepRendered(message: Message) {
+
+    const { processId, stepCodeName } = message.body;
+
+    this.getCurrent()
+      .pipe(
+        filter(process => Boolean(process) && process.id === processId),
+        tap(() => this.stepRendered.next(stepCodeName))
       )
       .subscribe();
   }

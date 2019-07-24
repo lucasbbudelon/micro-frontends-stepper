@@ -24,34 +24,36 @@ export class AppService extends Socket {
       .patch<any>(url, step)
       .pipe(
         tap((processUpdated) => {
-
-          this.emitLoadingStep(processUpdated.id);
-
           if (warnChange) {
-            this.emitUpdateProcess(processUpdated);
+            this.emitUpdateProcess(processUpdated.id);
           }
           if (moveNextStep) {
-            this.emitMoveStepper(processUpdated.id, processUpdated.nextStep.codeName);
+            this.emitMoveStepper(processUpdated.id);
           }
         })
       );
   }
 
-  private emitUpdateProcess(process) {
-    const message = this.getMessage('update-process', process);
+  emitStepRendered(processId: number, stepCodeName: string) {
+    const body = { processId, stepCodeName };
+    const message = this.getMessage('step-rendered', body);
     this.sendMessage(message);
   }
 
-  private emitMoveStepper(processId: number, codeName: string) {
-    const body = { processId, codeName };
-    const message = this.getMessage('move-stepper', body);
-    this.sendMessage(message);
-  }
-
-  private emitLoadingStep(processId: number) {
+  private emitUpdateProcess(processId) {
     const body = { processId };
-    const message = this.getMessage('loading-step', body);
+    const message = this.getMessage('update-process', body);
     this.sendMessage(message);
+  }
+
+  private emitMoveStepper(processId: number) {
+    const body = { processId };
+    const message = this.getMessage('move-next-step', body);
+    this.sendMessage(message);
+  }
+
+  private sendMessage(message) {
+    this.emit('on-message', message);
   }
 
   private getMessage(subject: string, body: any) {
@@ -63,9 +65,5 @@ export class AppService extends Socket {
       from: '',
       body
     };
-  }
-
-  sendMessage(message) {
-    this.emit('on-message', message);
   }
 }

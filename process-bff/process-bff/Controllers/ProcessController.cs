@@ -261,10 +261,18 @@ namespace process_bff.Controllers
                     },
                     new Step()
                     {
-                        CodeName = "academic-data",
-                        Title = "Dados Acadêmicos",
+                        CodeName = "time-experience",
+                        Title = "Tempo de Experiência",
                         Url = "http://localhost:3000",
-                        Order = 4
+                        Order = 4,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "experience-code",
+                                Required = true
+                            }
+                        }
                     },
                     new Step()
                     {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { tap, flatMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import * as constants from './app.constants';
 import { AppService } from './app.service';
 
 @Component({
@@ -9,32 +10,11 @@ import { AppService } from './app.service';
 })
 export class AppComponent implements OnInit {
 
+  public stepCodeName;
   public currentProcess;
   public currentStep;
   public fieldStep;
-  public packages = [
-    {
-      code: 'small',
-      title: 'Pequeno',
-      price: 12.5,
-      image: 'https://staynalivenew.files.wordpress.com/2013/06/2e7d1-brown-paper-package.png',
-      selected: false
-    },
-    {
-      code: 'medium',
-      title: 'Médio',
-      price: 19.9,
-      image: 'https://www.iupui.edu/~santedit/sant/wp-content/uploads/2015/05/brown_paper_packages_tied_up_with_strings.jpg',
-      selected: false
-    },
-    {
-      code: 'large',
-      title: 'Grande',
-      price: 29.9,
-      image: 'https://www.freeiconspng.com/uploads/packages-icon-12.jpg',
-      selected: false
-    }
-  ];
+  public items = constants.ITEMS;
 
   constructor(
     private appService: AppService
@@ -50,13 +30,12 @@ export class AppComponent implements OnInit {
 
     this.appService.getProcess(processId)
       .pipe(
-        tap(process => this.loadData(process)),
-        flatMap(() => this.updateLastAcess())
+        tap(process => this.loadData(process))
       )
       .subscribe();
   }
 
-  selectPackage(code: string) {
+  selectItem(code: string) {
     this.fieldStep.value = code;
   }
 
@@ -68,14 +47,10 @@ export class AppComponent implements OnInit {
   }
 
   private loadData(process) {
+    this.stepCodeName = 'promotional-package';
     this.currentProcess = process;
-    this.currentStep = process.steps.find(f => f.codeName === 'promotional-package');
+    this.currentStep = process.steps.find(f => f.codeName === this.stepCodeName);
     this.fieldStep = this.currentStep.fields.find(s => s.codeName === 'package-code');
-  }
-
-  private updateLastAcess() {
-    this.currentStep.lastAcess = new Date();
-    return this.appService
-      .saveStep(this.currentProcess, this.currentStep, { warnChange: true });
+    this.appService.emitStepRendered(process.id, this.stepCodeName);
   }
 }

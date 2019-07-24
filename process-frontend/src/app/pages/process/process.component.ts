@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { timer } from 'rxjs';
-import { catchError, finalize, flatMap, tap } from 'rxjs/operators';
+import { catchError, flatMap, tap } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
@@ -28,14 +28,11 @@ export class ProcessComponent implements OnInit {
 
   ngOnInit() {
 
-    this.backendFeedbackService.showLoading();
-
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
         tap(process => this.process = process),
         flatMap(() => this.timerToRedirect()),
-        catchError(error => this.backendFeedbackService.handleError(error)),
-        finalize(() => this.backendFeedbackService.showLoading())
+        catchError(error => this.backendFeedbackService.handleError(error))
       )
       .subscribe();
   }

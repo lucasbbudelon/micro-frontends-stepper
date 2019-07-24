@@ -3,67 +3,136 @@ import socketIOClient from "socket.io-client";
 import axios from 'axios';
 
 import './App.css';
+import * as constants from'./Constants.js';
+import * as environment from './Environment.js';
 
 class App extends Component { 
 
   constructor() {
     super();
+
     this.state = {
-      process: {},
-      socket: {}
+      stepCodeName: '',
+      currentProcess: {},
+      currentStep: {},
+      fieldStep: {},
+      items: constants.ITEMS,
+      socket: socketIOClient(environment.messenger)
     }
+
+    const processId = window.location.search.split('=')[1];
+    
+    axios
+      .get(`${environment.bff}/process/${processId}`)
+      .then(response => {
+        this.loadData(response.data);
+        this.emitStepRendered(response.data.id);
+      });
   }
 
-  componentDidMount() {
-    axios.get(`https://localhost:44390/api/process/123`)
-      .then(response => {
-        const process = response.data;
-        this.setState({ process });
-      });
+  loadData(process) {
+    const stepCodeName = 'time-experience';
+    const currentProcess = process;
+    const currentStep = process.steps.find(f => f.codeName === stepCodeName);
+    const fieldStep = currentStep.fields.find(s => s.codeName === 'experience-code');
+    this.setState({ stepCodeName, currentProcess, currentStep, fieldStep });
+  }
 
-      const socket = socketIOClient('http://localhost:4444');
-      this.setState({ socket });
+  saveStep(process, step, { warnChange = false, moveNextStep = false }) {
+    const url = `${environment.bff}/process/${process.id}/step/${step.codeName}`;
+    axios
+      .patch(url, step)
+      .then(response => {
+        const processUpdated = response.data;
+        this.loadData(processUpdated);
+        if (warnChange) this.emitUpdateProcess(processUpdated.id)
+        if (moveNextStep) this.emitMoveStepper(processUpdated.id)
+      });
+  }
+
+  emitStepRendered(processId) {
+    const { stepCodeName } = this.state;
+    const body = { processId, stepCodeName };
+    const message = this.getMessage('step-rendered', body);
+    this.sendMessage(message);
+  }
+
+  emitUpdateProcess(processId) {
+    const body = { processId };
+    const message = this.getMessage('update-process', body);
+    this.sendMessage(message);
+  }
+
+  emitMoveStepper(processId) {
+    const body = { processId };
+    const message = this.getMessage('move-next-step', body);
+    this.sendMessage(message);
+  }
+
+  sendMessage(message) {
+    const { socket } = this.state;
+    socket.emit('on-message', message);
+  }
+
+  getMessage(subject, body) {
+    return {
+      date: new Date(),
+      app: 'micro-frontend-react',
+      device: '',
+      subject,
+      from: '',
+      body
+    };
+  }
+
+  submit = () => {
+    const { currentProcess, currentStep } = this.state;
+    currentStep.lastUpdate = new Date();
+    this.saveStep(currentProcess, currentStep, { warnChange: true, moveNextStep: true });
+  } 
+
+  selectItem = (e) => {
+    const { fieldStep } = this.state;
+    fieldStep.value = e.currentTarget.id;
+    this.setState({ fieldStep });
+  }  
+
+  formatDate(value) {
+    const date = new Date(value);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
   }
 
   render() {
 
-    const { process, socket } = this.state;
-
-    function handleBackClick(e) {
-      e.preventDefault();
-      socket.emit('on-back-step', process);
-    }   
-
-    function handleNextClick(e) {
-      e.preventDefault();
-      socket.emit('on-next-step', process);
-    } 
-
+    const { currentStep, fieldStep, items } = this.state;
+   
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-12">
-            <h1>Dados Acadêmicos</h1>
+            <h1>{currentStep.title} (React)</h1>
+            { currentStep.lastAcess ? <small>Última visualização: {this.formatDate(currentStep.lastAcess)}</small> : null }
+            { currentStep.lastUpdate ? <small> | Última atualização: {this.formatDate(currentStep.lastUpdate)}</small> : null }
           </div>
         </div>
         <div className="row mt-4">
-          <div className="col-12">
-            <ul>
-              <li>Histórico ensino médio</li>
-              <li>Histórico ensino fundamental</li>
-              <li>Diploma curso técnico</li>
-              <li>Diploma graduação</li>
-              <li>Diploma Pós-Graduação</li>
-              <li>Diploma Mestrado</li>
-            </ul>
-          </div>
+          { items.map(item => 
+            <div key={item.code} className="col-4">
+              <div className={`card ${fieldStep.value === item.code ? 'item-selected' : ''}`} id={item.code} onClick={this.selectItem}>
+                <div className="wrapper-image">
+                  <img className="card-img-top" src={item.image} alt={item.title} />
+                </div>
+                <div className="card-body">
+                  <h5 className="card-title">{item.title}</h5>
+                  <p className="card-text">{item.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="row mt-5">
-          <div className="col-md-2 col col-sm-6">
-            <button type="button" className="btn btn-primary w-100" onClick={handleBackClick}>voltar</button>
-          </div>
-          <div className="col-md-2 col-sm-6">
-            <button type="button" className="btn btn-primary w-100" onClick={handleNextClick}>próximo</button>
+        <div className="row my-5">
+          <div className="col-12">
+            <button type="button" className="btn btn-primary w-100" disabled={fieldStep.value === null} onClick={this.submit}>salvar</button>
           </div>
         </div>
       </div>

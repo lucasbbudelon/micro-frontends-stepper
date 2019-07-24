@@ -24,8 +24,7 @@ export class DynamicFormComponent implements OnInit {
     this.backendFeedbackService.showLoading();
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
-        tap(process => this.loadStep(process)),
-        flatMap(process => this.updateLastAcess(process)),
+        flatMap(process => this.loadStep(process)),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )
@@ -34,7 +33,6 @@ export class DynamicFormComponent implements OnInit {
 
   submit() {
     this.backendFeedbackService.showLoading();
-
     this.step.lastUpdate = new Date();
     this.processService
       .saveStep(this.step, { warnChange: true, moveNextStep: true })
@@ -48,11 +46,6 @@ export class DynamicFormComponent implements OnInit {
   private loadStep(process: Process) {
     const codeName = this.activatedRoute.snapshot.routeConfig.path;
     this.step = process.steps.find(s => s.codeName === codeName);
-  }
-
-  private updateLastAcess(process: Process) {
-    this.step.lastAcess = new Date();
-    return this.processService
-      .saveStep(this.step, { warnChange: true });
+    return this.processService.updateLastAcessStep(this.step);
   }
 }

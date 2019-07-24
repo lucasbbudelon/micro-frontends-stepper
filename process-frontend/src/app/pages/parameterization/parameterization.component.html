@@ -1,1 +1,13 @@
-<iframe *ngIf="url" class="external-contract-frame" frameborder="0" [src]="url"></iframe>
+<iframe *ngIf="url && !errorRendered" class="external-contract-frame" frameborder="0" [src]="url"></iframe>
+<div *ngIf="errorRendered" class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1>{{step?.title}}</h1>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-12">
+      <p>Não foi possível carregar o conteúdo desta etapa. Você pode avançar no processo e tentar mais tarde.</p>
+    </div>
+  </div>
+</div>

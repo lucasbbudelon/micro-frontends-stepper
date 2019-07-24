@@ -50,7 +50,7 @@ const routes: Routes = [
         component: ParameterizationComponent
       },
       {
-        path: 'academic-data',
+        path: 'time-experience',
         component: ParameterizationComponent
       },
       {
