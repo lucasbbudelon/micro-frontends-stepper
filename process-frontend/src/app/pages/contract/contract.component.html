@@ -1,16 +1,70 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-12">
-      <h1>Contrato</h1>
+    <div class="col-9">
+      <h1>{{contract.title}}</h1>
+      <small>Última visualização: {{contract.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+      <br />
+      <small *ngIf="contract.lastUpdate">Última atualização:
+        {{contract.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
+    </div>
+    <div class="col-3 d-none" [class.d-lg-block]="!process.finished">
+      <fa class="display-2" name="hourglass-start" animation="spin"></fa>
     </div>
   </div>
-  <div class="row mt-4">
+  <div class="row mt-4 d-none" [class.d-lg-block]="!process.finished">
     <div class="col-12">
+      <p class="display-4 mb-5">Aguardando assinatura do contrato em um dispositivo mobile.</p>
+    </div>
+  </div>
+  <div class="row mt-4" [class.d-lg-none]="!process.finished">
+    <div class="col-12">
+      <h3>Termos do Contrado</h3>
+      <p>
+        Leia atentamente os termos e confirme para poder assinar o contrato.
+      </p>
+      <ol>
+        <li *ngFor="let term of terms">
+          <h4>{{term.title}}</h4>
+          <p>{{term.text}} </p>
+        </li>
+      </ol>
+      <div class="form-check mt-3" *ngIf="!process.finished">
+        <input type="checkbox" class="form-check-input" id="accept-terms" [(ngModel)]="accept">
+        <label class="form-check-label" for="accept-terms">Li e concordo com os termos.</label>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4" [class.d-lg-none]="!process.finished">
+    <div class="col-12">
+      <h3>Dados do processo</h3>
+      <p>
+        Confira atentamente os dados o cofirme para poder assinar o contrato.
+      </p>
       <ul>
-        <li>Ler contrato</li>
-        <li>Concordar com os termos</li>
-        <li>Assinatura digital</li>
+        <li *ngFor="let step of process.steps">
+          <h4>{{step.title}}</h4>
+          <ul>
+            <li *ngFor="let field of step.fields">
+              <strong>{{field.label}}: </strong> {{field.value ? field.value : 'Não informado'}}
+            </li>
+          </ul>
+        </li>
       </ul>
+      <div class="form-check mt-3" *ngIf="!process.finished">
+        <input type="checkbox" class="form-check-input" id="confirm-data" [(ngModel)]="confirm">
+        <label class="form-check-label" for="confirm-data">Confirmo os dados do processo.</label>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5" *ngIf="dateSignature?.value">
+    <div class="col-12">
+      <p>Assinado em {{dateSignature.value}}</p>
+    </div>
+  </div>
+  <div class="row my-5 d-lg-none" *ngIf="!process.finished">
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="disabledSignature()" (click)="signature()">assinar
+        contrato</button>
     </div>
   </div>
 </div>

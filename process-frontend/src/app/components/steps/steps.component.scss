@@ -28,12 +28,26 @@ ul {
     color: $primary;
     content: "\007C";
     display: inline-block;
-    font-size: 30px;
     position: relative;
+    font-size: 30px;
     margin-left: 1.5px;
   }
 }
 
 .completed {
   background-color: $primary;
+}
+
+.icon {
+  margin-right: 1em;
+
+  &::before {
+    color: $primary;
+    content: "\007C";
+    display: inline-block;
+    position: absolute;
+    font-size: 30px;
+    left: 11px;
+    margin-top: 8px;
+  }
 }

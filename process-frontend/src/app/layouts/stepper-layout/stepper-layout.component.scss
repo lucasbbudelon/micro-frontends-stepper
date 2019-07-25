@@ -52,3 +52,20 @@ ul {
 .completed {
   background-color: $primary;
 }
+
+.block {
+  position: fixed;
+  $info-height: 4vh;
+  height: 100vh - $info-height;
+  top: $info-height;
+  width: 100%;
+  left: 0;
+  opacity: 0.2;
+  z-index: 9999;
+  background: $gray-400;
+  border-top: 2px solid $gray-800;
+}
+
+.block-info {
+  background-color: $white;
+}

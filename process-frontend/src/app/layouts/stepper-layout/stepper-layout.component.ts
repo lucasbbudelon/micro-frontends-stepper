@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { filter, tap, flatMap, finalize } from 'rxjs/operators';
+import { filter, tap, finalize } from 'rxjs/operators';
 import { Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
-import { timer } from 'rxjs';
-import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 
 @Component({
   selector: 'app-stepper-layout',
@@ -14,10 +12,10 @@ import { BackendFeedbackService } from 'src/app/components/backend-feedback/back
 export class StepperLayoutComponent implements OnInit {
 
   public process: Process;
+  public block: boolean;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private backendFeedbackService: BackendFeedbackService,
     private processService: ProcessService
   ) { }
 
@@ -27,7 +25,8 @@ export class StepperLayoutComponent implements OnInit {
 
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
-        tap(process => this.process = process)
+        tap(process => this.process = process),
+        finalize(() => this.unlock())
       )
       .subscribe();
 
@@ -35,6 +34,12 @@ export class StepperLayoutComponent implements OnInit {
       .pipe(
         filter(process => Boolean(process)),
         tap(process => this.process = process)
+      )
+      .subscribe();
+
+    this.processService.block
+      .pipe(
+        tap(block => this.block = block)
       )
       .subscribe();
   }
@@ -45,6 +50,10 @@ export class StepperLayoutComponent implements OnInit {
 
   back() {
     this.processService.navigateToStep(this.process, this.process.backStep);
+  }
+
+  unlock() {
+    this.processService.unlockMyDevice(this.process.id);
   }
 
   private initOnkeydown() {

@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, flatMap, tap } from 'rxjs/operators';
+import { catchError, finalize, flatMap } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
@@ -12,6 +12,7 @@ import { ProcessService } from 'src/app/core/process/process.service';
 })
 export class DynamicFormComponent implements OnInit, AfterContentInit {
 
+  public process: Process;
   public step: Step;
 
   constructor(
@@ -24,7 +25,7 @@ export class DynamicFormComponent implements OnInit, AfterContentInit {
     this.backendFeedbackService.showLoading();
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
-        flatMap(process => this.loadStep(process)),
+        flatMap(process => this.loadData(process)),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )
@@ -51,7 +52,8 @@ export class DynamicFormComponent implements OnInit, AfterContentInit {
       .subscribe();
   }
 
-  private loadStep(process: Process) {
+  private loadData(process: Process) {
+    this.process = process;
     const codeName = this.activatedRoute.snapshot.routeConfig.path;
     this.step = process.steps.find(s => s.codeName === codeName);
     return this.processService.updateLastAcessStep(this.step);

@@ -52,5 +52,13 @@ namespace Model
             }
         }
         public DateTime? LastUpdate { get; set; }
+        public bool Finished
+        {
+            get
+            {
+                return !Steps.Any(s => !s.Completed);
+
+            }
+        }
     }
 }

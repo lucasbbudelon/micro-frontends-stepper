@@ -8,9 +8,13 @@ import { Message } from './messenger.model';
 })
 export class MessengerService {
 
+  public currentDevice: string;
+
   constructor(
     private socket: Socket
-  ) { }
+  ) {
+    this.currentDevice = window.navigator.productSub;
+  }
 
   receptor() {
     return this.socket.fromEvent<Message>('message');
@@ -24,7 +28,7 @@ export class MessengerService {
     return {
       date: new Date(),
       app: 'process-frontend',
-      device: '',
+      device: this.currentDevice,
       subject,
       from: '',
       body

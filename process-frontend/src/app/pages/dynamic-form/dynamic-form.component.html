@@ -11,19 +11,26 @@
       <div class="form-group" *ngFor="let field of step.fields">
         <label [for]="field.codeName">{{field.label}} <span *ngIf="field.required">*</span> </label>
 
-        <input *ngIf="!field.options" class="form-control" type="text" [(ngModel)]="field.value" [name]="field.codeName"
-          [required]="field.required" [placeholder]="field.placeholder">
+        <input *ngIf="!field.options" class="form-control" type="text" 
+          [(ngModel)]="field.value" 
+          [name]="field.codeName"
+          [required]="field.required" 
+          [placeholder]="field.placeholder" 
+          [readonly]="process.finished">
 
-        <select *ngIf="field.options" class="form-control" [(ngModel)]="field.value" [name]="field.codeName"
-          [required]="field.required">
+        <select *ngIf="field.options" class="form-control" 
+          [(ngModel)]="field.value" 
+          [name]="field.codeName"
+          [required]="field.required"
+          [disabled]="process.finished">
 
-          <option>{{field.placeholder}}</option>
+          <option [value]="null" disabled>{{field.placeholder}}</option>
           <option *ngFor="let option of field.options" [value]="option">{{option}}</option>
         </select>
       </div>
     </div>
   </div>
-  <div class="row my-5">
+  <div class="row my-5" *ngIf="!process.finished">
     <div class="col-12">
       <button type="submit" class="btn btn-primary w-100" [disabled]="!stepForm.form.valid">salvar</button>
     </div>

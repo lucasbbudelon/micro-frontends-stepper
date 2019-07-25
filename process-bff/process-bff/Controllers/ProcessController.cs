@@ -90,26 +90,26 @@ namespace process_bff.Controllers
         }
 
         // Put: api/process/123
-        [HttpPut("{id}")]
-        public ActionResult<Process> Put(int id, [FromBody] Process body)
-        {
-            var process = _listProcess.FirstOrDefault(p => p.Id == id);
+        //[HttpPut("{id}")]
+        //public ActionResult<Process> Put(int id, [FromBody] Process body)
+        //{
+        //    var process = _listProcess.FirstOrDefault(p => p.Id == id);
 
-            if (process == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                _listProcess.RemoveAll(p => p.Id == id);
+        //    if (process == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    else
+        //    {
+        //        _listProcess.RemoveAll(p => p.Id == id);
 
-                body.LastUpdate = DateTime.Now;
+        //        body.LastUpdate = DateTime.Now;
 
-                _listProcess.Add(body);
+        //        _listProcess.Add(body);
 
-                return Ok(process);
-            }
-        }
+        //        return Ok(process);
+        //    }
+        //}
 
         // Patch: api/process/123/step/document
         [HttpPatch("{id}/step/{codeName}")]
@@ -270,6 +270,7 @@ namespace process_bff.Controllers
                             new Field()
                             {
                                 CodeName = "experience-code",
+                                Label = "Código",
                                 Required = true
                             }
                         }
@@ -285,6 +286,7 @@ namespace process_bff.Controllers
                             new Field()
                             {
                                 CodeName = "package-code",
+                                Label = "Código",
                                 Required = true
                             }
                         }
@@ -293,8 +295,16 @@ namespace process_bff.Controllers
                     {
                         CodeName = "contract",
                         Title = "Contrato",
-                        Url = "http://localhost:4300",
-                        Order = 6
+                        Order = 6,
+                        Fields = new List<Field>()
+                        {
+                            new Field()
+                            {
+                                CodeName = "date-signature",
+                                Label = "Data da assinatura",
+                                Required = true
+                            }
+                        }
                     }
                 };
         }

@@ -2,11 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { StepperLayoutComponent } from './layouts/stepper-layout/stepper-layout.component';
 import { ContractComponent } from './pages/contract/contract.component';
+import { DefaultPageComponent } from './pages/default-page/default-page.component';
 import { DynamicFormComponent } from './pages/dynamic-form/dynamic-form.component';
-import { ErrorComponent } from './pages/error/error.component';
-import { FinalizationComponent } from './pages/finalization/finalization.component';
+import { FinishComponent } from './pages/finish/finish.component';
 import { ListComponent } from './pages/list/list.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ParameterizationComponent } from './pages/parameterization/parameterization.component';
 import { ProcessComponent } from './pages/process/process.component';
 
@@ -56,20 +55,30 @@ const routes: Routes = [
       {
         path: 'contract',
         component: ContractComponent
+      },
+      {
+        path: 'finish',
+        component: FinishComponent
       }
     ]
   },
   {
-    path: 'finalization',
-    component: FinalizationComponent
-  },
-  {
     path: 'not-found',
-    component: NotFoundComponent
+    component: DefaultPageComponent,
+    data: {
+      title: 'Recurso não encontrado!',
+      icon: 'search-minus',
+      text: 'Desculpe, mas não foi possível localizar este recurso.',
+    }
   },
   {
     path: '**',
-    component: ErrorComponent
+    component: DefaultPageComponent,
+    data: {
+      title: 'Ops, ocorreu um erro!',
+      icon: 'exclamation-triangle',
+      text: 'Desculpe, mas ocorreu um erro inesperado. Por favor, tente novamente mais tarde.',
+    }
   }
 ];
 

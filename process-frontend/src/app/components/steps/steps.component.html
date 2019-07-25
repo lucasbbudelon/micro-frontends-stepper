@@ -1,9 +1,16 @@
 <ul *ngIf="steps">
   <li *ngFor="let step of steps">
     <a [routerLink]="['/process', process.id, step.codeName]" routerLinkActive="currenr-step">
-      <div class="circle" [class.completed]="step.completed"></div>
+      <!-- <div class="circle" [class.completed]="step.completed"></div>-->
+      <fa *ngIf="step.completed" name="check-circle" class="icon ml-2 text-primary"></fa>
+      <fa *ngIf="!step.completed" name="circle" class="icon ml-2 text-primary"></fa>
       <span class="name">{{step.title}}</span>
-      <fa *ngIf="step.completed" name="check-circle" class="ml-2 text-success"></fa>
+    </a>
+  </li>
+  <li *ngIf="process.finished">
+    <a [routerLink]="['/process', process.id, 'finish']" routerLinkActive="currenr-step">
+      <fa name="check-circle" class="icon ml-2 text-primary"></fa>
+      <span class="name">Finalização</span>
     </a>
   </li>
 </ul>

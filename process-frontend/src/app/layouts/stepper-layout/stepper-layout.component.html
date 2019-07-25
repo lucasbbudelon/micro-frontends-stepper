@@ -1,3 +1,8 @@
+<p class="block-info" *ngIf="block">
+  Este processo está bloqueado pois está aberto em outro dispositivo. Você pode desbloquear
+  <a href="javascript:void(0)" (click)="unlock()">clicando aqui</a>.
+</p>
+<div class="block" *ngIf="block"></div>
 <div class="container-fluid p-5" *ngIf="process">
   <div class="row">
     <div class="col-1 col-xl-2 d-flex justify-content-center">

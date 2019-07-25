@@ -15,13 +15,12 @@ import { MessengerService } from './core/messenger/messenger.service';
 import { ProcessService } from './core/process/process.service';
 import { StepperLayoutComponent } from './layouts/stepper-layout/stepper-layout.component';
 import { ContractComponent } from './pages/contract/contract.component';
+import { DefaultPageComponent } from './pages/default-page/default-page.component';
 import { DynamicFormComponent } from './pages/dynamic-form/dynamic-form.component';
-import { ErrorComponent } from './pages/error/error.component';
-import { FinalizationComponent } from './pages/finalization/finalization.component';
 import { ListComponent } from './pages/list/list.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ParameterizationComponent } from './pages/parameterization/parameterization.component';
 import { ProcessComponent } from './pages/process/process.component';
+import { FinishComponent } from './pages/finish/finish.component';
 
 @NgModule({
   declarations: [
@@ -30,14 +29,13 @@ import { ProcessComponent } from './pages/process/process.component';
     DynamicFormComponent,
     ParameterizationComponent,
     ContractComponent,
-    FinalizationComponent,
-    NotFoundComponent,
-    ErrorComponent,
     StepsComponent,
     ProgressBarComponent,
     BackendFeedbackComponent,
     ListComponent,
     StepperLayoutComponent,
+    DefaultPageComponent,
+    FinishComponent,
   ],
   imports: [
     BrowserModule,
