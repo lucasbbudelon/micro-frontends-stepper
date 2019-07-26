@@ -27,6 +27,7 @@ class App extends Component {
       .then(response => {
         this.loadData(response.data);
         this.emitStepRendered(response.data.id);
+        this.initOnkeydown();
       });
   }
 
@@ -97,6 +98,43 @@ class App extends Component {
     this.setState({ fieldStep });
   }  
 
+  initOnkeydown() {
+    document.onkeydown = (e) => {
+
+      if (e.ctrlKey) { return; }
+
+      const { fieldStep, items } = this.state;
+      const indexItemSelected = this.getItemSelected();
+      let newItemSelected;
+
+      switch (e.key) {
+        case 'Enter':
+          if (!fieldStep.value) { return; }
+          this.submit();
+          break;
+        case 'ArrowLeft':
+          newItemSelected = items[indexItemSelected - 1];
+          break;
+        case 'ArrowRight':
+          newItemSelected = items[indexItemSelected + 1];
+          break;
+        default:
+          break;
+      }
+
+      if (!newItemSelected) { newItemSelected = items[indexItemSelected]; }
+      if (indexItemSelected < 0) { newItemSelected = items[0]; }
+      fieldStep.value = newItemSelected.code;
+      this.setState({ fieldStep });
+    };
+  }
+
+  getItemSelected() {
+    const { fieldStep, items } = this.state;
+    const itemSelected = items.find(x => x.code === fieldStep.value);
+    return items.indexOf(itemSelected);
+  }
+
   formatDate(value) {
     const date = new Date(value);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -110,7 +148,7 @@ class App extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12">
-            <h1>{currentStep.title} (React)</h1>
+            <h1>{currentStep.title}</h1>
             { currentStep.lastAcess ? <small>Última visualização: {this.formatDate(currentStep.lastAcess)}</small> : null }
             { currentStep.lastUpdate ? <small> | Última atualização: {this.formatDate(currentStep.lastUpdate)}</small> : null }
           </div>

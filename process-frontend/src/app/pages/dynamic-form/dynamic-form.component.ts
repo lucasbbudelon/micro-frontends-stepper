@@ -35,7 +35,9 @@ export class DynamicFormComponent implements OnInit, AfterContentInit {
   public ngAfterContentInit() {
     setTimeout(() => {
       const form = window.document.forms[0];
+      if (!form) { return; }
       const element: any = form.elements[0];
+      if (!element) { return; }
       element.focus();
     }, 500);
   }

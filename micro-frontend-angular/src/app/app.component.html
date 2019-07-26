@@ -1,7 +1,7 @@
 <div class="container-fluid" *ngIf="currentProcess">
   <div class="row">
     <div class="col-12">
-      <h1>{{currentStep.title}} (Angular)</h1>
+      <h1>{{currentStep.title}}</h1>
       <small>Última visualização: {{currentStep.lastAcess | date:'dd/MM/yyyy hh:mm:ss'}}</small>
       <small *ngIf="currentStep.lastUpdate"> | Última atualização:
         {{currentStep.lastUpdate | date:'dd/MM/yyyy hh:mm:ss'}}</small>
@@ -22,7 +22,7 @@
   </div>
   <div class="row my-5">
     <div class="col-12">
-      <button type="button" class="btn btn-primary w-100" [disabled]="!fieldStep.value"
+      <button type="submit" class="btn btn-primary w-100" [disabled]="!fieldStep.value"
         (click)="submit()">salvar</button>
     </div>
   </div>
