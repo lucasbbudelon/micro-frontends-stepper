@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { MessengerService } from './core/messenger/messenger.service';
-import { ProcessService } from './core/process/process.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,29 +6,6 @@ import { ProcessService } from './core/process/process.service';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit {
-
-  public block: boolean;
-
-  constructor(
-    private messengerService: MessengerService,
-    private processService: ProcessService
-  ) { }
-
-  ngOnInit() {
-
-    // this.messengerService.nextStepListening()
-    //   .pipe(tap(process => this.processService.handleNextStep(process)))
-    //   .subscribe();
-
-    // this.messengerService.backStepListening()
-    //   .pipe(tap(process => this.processService.handleBackStep(process)))
-    //   .subscribe();
-
-    // this.messengerService.blockProcessListening()
-    //   .pipe(tap(() => this.block = true))
-    //   .subscribe();
-
-    // this.processService.keepProcess();
-  }
+export class AppComponent {
+  constructor() { }
 }

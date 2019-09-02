@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { catchError, takeUntil, tap } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
@@ -10,9 +11,11 @@ import { ProcessService } from 'src/app/core/process/process.service';
   templateUrl: './finish.component.html',
   styleUrls: ['./finish.component.scss']
 })
-export class FinishComponent implements OnInit {
+export class FinishComponent implements OnInit, OnDestroy {
 
   public process: Process;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -24,9 +27,15 @@ export class FinishComponent implements OnInit {
 
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         tap(process => this.process = process),
         catchError(error => this.backendFeedbackService.handleError(error))
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

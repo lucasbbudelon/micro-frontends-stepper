@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { timer } from 'rxjs';
-import { catchError, flatMap, tap } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
+import { catchError, flatMap, takeUntil, tap } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
@@ -11,11 +11,13 @@ import { ProcessService } from 'src/app/core/process/process.service';
   templateUrl: './process.component.html',
   styleUrls: ['./process.component.scss']
 })
-export class ProcessComponent implements OnInit {
+export class ProcessComponent implements OnInit, OnDestroy {
 
   public process: Process;
   public waitRedirection: number;
   public missingRime: number;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -30,6 +32,7 @@ export class ProcessComponent implements OnInit {
 
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         tap(process => this.process = process),
         flatMap(() => this.timerToRedirect()),
         catchError(error => this.backendFeedbackService.handleError(error))
@@ -37,6 +40,10 @@ export class ProcessComponent implements OnInit {
       .subscribe();
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
   navigateToCurrentStep() {
     this.processService.navigateToStep(this.process, this.process.currentStep);

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { filter, tap, finalize } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, finalize, takeUntil, tap } from 'rxjs/operators';
 import { Process } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 
@@ -9,10 +10,12 @@ import { ProcessService } from 'src/app/core/process/process.service';
   templateUrl: './stepper-layout.component.html',
   styleUrls: ['./stepper-layout.component.scss']
 })
-export class StepperLayoutComponent implements OnInit {
+export class StepperLayoutComponent implements OnInit, OnDestroy {
 
   public process: Process;
   public block: boolean;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -25,6 +28,7 @@ export class StepperLayoutComponent implements OnInit {
 
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         tap(process => this.process = process),
         finalize(() => this.unlock())
       )
@@ -32,6 +36,7 @@ export class StepperLayoutComponent implements OnInit {
 
     this.processService.current
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         filter(process => Boolean(process)),
         tap(process => this.process = process)
       )
@@ -39,9 +44,15 @@ export class StepperLayoutComponent implements OnInit {
 
     this.processService.block
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         tap(block => this.block = block)
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   next() {

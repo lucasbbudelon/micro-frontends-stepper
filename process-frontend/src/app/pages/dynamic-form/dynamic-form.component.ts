@@ -1,19 +1,22 @@
-import { AfterContentInit, Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, flatMap } from 'rxjs/operators';
+import { catchError, finalize, flatMap, takeUntil } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-dynamic-form',
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
 })
-export class DynamicFormComponent implements OnInit, AfterContentInit {
+export class DynamicFormComponent implements OnInit, OnDestroy, AfterContentInit {
 
   public process: Process;
   public step: Step;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -25,11 +28,17 @@ export class DynamicFormComponent implements OnInit, AfterContentInit {
     this.backendFeedbackService.showLoading();
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         flatMap(process => this.loadData(process)),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public ngAfterContentInit() {
@@ -48,6 +57,7 @@ export class DynamicFormComponent implements OnInit, AfterContentInit {
     this.processService
       .saveStep(this.step, { warnChange: true, moveNextStep: true })
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )

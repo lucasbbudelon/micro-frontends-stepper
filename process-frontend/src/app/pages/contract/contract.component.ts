@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, flatMap, delay } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { catchError, finalize, flatMap, takeUntil } from 'rxjs/operators';
 import { BackendFeedbackService } from 'src/app/components/backend-feedback/backend-feedback.service';
 import { Field, Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
@@ -11,7 +12,7 @@ import { TERMS } from './contract.constants';
   templateUrl: './contract.component.html',
   styleUrls: ['./contract.component.scss']
 })
-export class ContractComponent implements OnInit {
+export class ContractComponent implements OnInit, OnDestroy {
 
   public codeNameStep = 'contract';
   public codeNameField = 'date-signature';
@@ -24,6 +25,8 @@ export class ContractComponent implements OnInit {
   public accept: boolean;
   public confirm: boolean;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private backendFeedbackService: BackendFeedbackService,
@@ -34,11 +37,17 @@ export class ContractComponent implements OnInit {
     this.backendFeedbackService.showLoading();
     this.processService.getCurrent(this.activatedRoute)
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         flatMap(process => this.loadStep(process)),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   signature() {
@@ -48,6 +57,7 @@ export class ContractComponent implements OnInit {
     this.processService
       .saveStep(this.contract, { warnChange: true, moveNextStep: true, warnSignature: true })
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         catchError(error => this.backendFeedbackService.handleError(error)),
         finalize(() => this.backendFeedbackService.hideLoading())
       )

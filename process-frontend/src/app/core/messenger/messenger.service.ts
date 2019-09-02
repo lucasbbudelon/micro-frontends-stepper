@@ -13,7 +13,7 @@ export class MessengerService {
   constructor(
     private socket: Socket
   ) {
-    this.currentDevice = window.navigator.productSub;
+    this.currentDevice = `${navigator.userAgent} | ${window.innerWidth}x${window.innerHeight}px`;
   }
 
   receptor() {

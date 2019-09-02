@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { filter, tap } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { Process, Step } from 'src/app/core/process/process.model';
 import { ProcessService } from 'src/app/core/process/process.service';
 
@@ -8,10 +9,12 @@ import { ProcessService } from 'src/app/core/process/process.service';
   templateUrl: './steps.component.html',
   styleUrls: ['./steps.component.scss']
 })
-export class StepsComponent implements OnInit {
+export class StepsComponent implements OnInit, OnDestroy {
 
   public process: Process;
   public steps: Step[];
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private processService: ProcessService
@@ -20,6 +23,7 @@ export class StepsComponent implements OnInit {
   ngOnInit() {
     this.processService.current
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         filter(process => Boolean(process)),
         tap((process) => {
           this.process = process;
@@ -27,5 +31,10 @@ export class StepsComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }
