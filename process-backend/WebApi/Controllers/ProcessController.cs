@@ -89,28 +89,6 @@ namespace process_bff.Controllers
             return Ok(body);
         }
 
-        // Put: api/process/123
-        //[HttpPut("{id}")]
-        //public ActionResult<Process> Put(int id, [FromBody] Process body)
-        //{
-        //    var process = _listProcess.FirstOrDefault(p => p.Id == id);
-
-        //    if (process == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    else
-        //    {
-        //        _listProcess.RemoveAll(p => p.Id == id);
-
-        //        body.LastUpdate = DateTime.Now;
-
-        //        _listProcess.Add(body);
-
-        //        return Ok(process);
-        //    }
-        //}
-
         // Patch: api/process/123/step/document
         [HttpPatch("{id}/step/{codeName}")]
         public ActionResult<Process> Patch(int id, string codeName, [FromBody] Step step)
@@ -137,6 +115,7 @@ namespace process_bff.Controllers
 
         private List<Step> GetSteps()
         {
+            string serverHost = "172.22.204.20";
             return new List<Step>
                 {
                     new Step()
@@ -263,7 +242,7 @@ namespace process_bff.Controllers
                     {
                         CodeName = "time-experience",
                         Title = "Tempo de Experiência",
-                        Url = "http://localhost:3000",
+                        Url = string.Format("http://{0}:4300", serverHost),
                         Order = 4,
                         Fields = new List<Field>()
                         {
@@ -279,7 +258,7 @@ namespace process_bff.Controllers
                     {
                         CodeName = "promotional-package",
                         Title = "Pacote promocional",
-                        Url = "http://localhost:4500",
+                        Url = string.Format("http://{0}:4400", serverHost),
                         Order = 5,
                         Fields = new List<Field>()
                         {
