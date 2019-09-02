@@ -2,10 +2,12 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+const serverHost = '172.22.204.20';
+
 export const environment = {
   production: false,
-  bff: 'https://localhost:44390/api',
-  messenger: 'http://localhost:4444'
+  bff: `http://${serverHost}:3000/api/v1`,
+  messenger: `http://${serverHost}:4444`
 };
 
 /*
