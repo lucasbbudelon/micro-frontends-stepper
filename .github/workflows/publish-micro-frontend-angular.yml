@@ -1,0 +1,13 @@
+name: publish-micro-frontend-angular
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Publish to surge.sh
+      uses: dswistowski/surge-sh-action@v1.0.0
+      with:
+        domain: micro-frontend-angular.micro-frontends-stepper
+        login: lucasbbudelon@gmail.com
+        token: f5d91f54bea8b74fefbefeaac56049d5
